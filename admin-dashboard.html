@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="admin-dashboard.html">
+                <div>Admin</div>
+                <div><i class="fas fa-hotel"></i> Grand Hotel</div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="admin-dashboard.html">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-reservation.html">
+                            <i class="fas fa-calendar-check"></i> Reservations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-billing.html">
+                            <i class="fas fa-file-invoice-dollar"></i> Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-history.html">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="room-status.html">
+                            <i class="fas fa-door-open"></i> Rooms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-feedback.html">
+                            <i class="fas fa-headset"></i> Support
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    <span class="welcome-user me-3">Welcome Admin</span>
+                    <button class="btn btn-outline-light btn-sm logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container dashboard-container">
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1>Admin Dashboard</h1>
+                    <p class="lead">Manage hotel operations efficiently</p>
+                    <p>Welcome to the administrative control panel. Monitor and manage all hotel operations from this
+                        central dashboard.</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="fas fa-cogs" style="font-size: 4rem; opacity: 0.7;"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <h3 class="mb-4">Today's Overview</h3>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-users text-primary" style="font-size: 2rem;"></i>
+                        <h5 class="card-title mt-2">Total Guests</h5>
+                        <h3 class="text-primary" id="totalGuests">24</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-door-closed text-danger" style="font-size: 2rem;"></i>
+                        <h5 class="card-title mt-2">Occupied Rooms</h5>
+                        <h3 class="text-danger" id="occupiedRooms">18</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-door-open text-success" style="font-size: 2rem;"></i>
+                        <h5 class="card-title mt-2">Available Rooms</h5>
+                        <h3 class="text-success" id="availableRooms">12</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-rupee-sign text-warning" style="font-size: 2rem;"></i>
+                        <h5 class="card-title mt-2">Today's Revenue</h5>
+                        <h3 class="text-warning">₹45,000</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Actions -->
+        <h3 class="mb-4">Admin Actions</h3>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card menu-card" onclick="window.location.href='admin-reservation.html'">
+                    <div class="card-body">
+                        <div class="menu-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h5 class="card-title">Manage Reservations</h5>
+                        <p class="card-text">Approve or reject pending reservations</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card menu-card" onclick="window.location.href='admin-billing.html'">
+                    <div class="card-body">
+                        <div class="menu-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <h5 class="card-title">Generate Invoices</h5>
+                        <p class="card-text">Create and manage billing invoices</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card menu-card" onclick="window.location.href='room-status.html'">
+                    <div class="card-body">
+                        <div class="menu-icon">
+                            <i class="fas fa-door-open"></i>
+                        </div>
+                        <h5 class="card-title">Room Status</h5>
+                        <p class="card-text">Check room availability and status</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card menu-card" onclick="window.location.href='admin-history.html'">
+                    <div class="card-body">
+                        <div class="menu-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h5 class="card-title">Booking History</h5>
+                        <p class="card-text">View guest booking history</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card menu-card" onclick="window.location.href='admin-bookings.html'">
+                    <div class="card-body">
+                        <div class="menu-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h5 class="card-title">All Bookings</h5>
+                        <p class="card-text">Manage all hotel bookings</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card menu-card" onclick="window.location.href='support.html'">
+                    <div class="card-body">
+                        <div class="menu-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h5 class="card-title">Customer Support</h5>
+                        <p class="card-text">Handle customer complaints</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-clock"></i> Recent Activities</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    New reservation approved
+                                </div>
+                                <small class="text-muted">2 mins ago</small>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-sign-out-alt text-info"></i>
+                                    Guest checked out - Room 205
+                                </div>
+                                <small class="text-muted">15 mins ago</small>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-sign-in-alt text-primary"></i>
+                                    Guest checked in - Room 102
+                                </div>
+                                <small class="text-muted">1 hour ago</small>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-file-invoice text-warning"></i>
+                                    Invoice generated for BK20240322001
+                                </div>
+                                <small class="text-muted">2 hours ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-exclamation-triangle"></i> Pending Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-calendar text-warning"></i>
+                                        3 pending reservations
+                                    </div>
+                                    <button class="btn btn-sm btn-primary"
+                                        onclick="window.location.href='admin-reservation.html'">Review</button>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-broom text-info"></i>
+                                        5 rooms need cleaning
+                                    </div>
+                                    <button class="btn btn-sm btn-info">Assign</button>
+                                </div>
+                            </div>
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="fas fa-comment text-danger"></i>
+                                        2 customer complaints
+                                    </div>
+                                    <button class="btn btn-sm btn-danger"
+                                        onclick="window.location.href='support.html'">Handle</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Grand Hotel Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Update statistics with real data
+        function updateStatistics() {
+            // Calculate actual statistics from stored data
+            if (reservations) {
+                const pendingCount = reservations.filter(r => r.status === 'pending').length;
+                const approvedCount = reservations.filter(r => r.status === 'approved').length;
+
+                // Update UI with real counts
+                document.getElementById('totalGuests').textContent = approvedCount;
+                document.getElementById('occupiedRooms').textContent = approvedCount;
+                document.getElementById('availableRooms').textContent = 30 - approvedCount; // Assuming 30 total rooms
+            }
+        }
+
+        // Call updateStatistics when page loads
+        document.addEventListener('DOMContentLoaded', updateStatistics);
+    </script>
+</body>
+
+</html>

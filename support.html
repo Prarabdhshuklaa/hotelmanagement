@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System - Customer Support</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-hotel"></i> Grand Hotel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reservation.html">
+                            <i class="fas fa-calendar-plus"></i> Reservation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="billing.html">
+                            <i class="fas fa-file-invoice"></i> Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="support.html">
+                            <i class="fas fa-headset"></i> Customer Support
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    <span class="welcome-user me-3">Welcome Guest</span>
+                    <button class="btn btn-outline-light btn-sm logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container dashboard-container">
+        <div class="row justify-content-center">
+            <!-- Feedback Form (Centered) -->
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-comment-dots"></i> Feedback & Complaints</h4>
+                    </div>
+                    <div class="card-body">
+                        <form id="supportForm" class="feedback-form">
+                            <div class="mb-3">
+                                <label for="complaintType" class="form-label">Type of Complaint/Feedback</label>
+                                <select class="form-select" id="complaintType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="service">Service Issue</option>
+                                    <option value="room">Room Problem</option>
+                                    <option value="food">Food & Beverage</option>
+                                    <option value="billing">Billing Issue</option>
+                                    <option value="facility">Facility Problem</option>
+                                    <option value="staff">Staff Behavior</option>
+                                    <option value="suggestion">Suggestion</option>
+                                    <option value="compliment">Compliment</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="roomNumber" class="form-label">Room Number</label>
+                                <input type="text" class="form-control" id="roomNumber"
+                                    placeholder="Enter your room number" pattern="[0-9]{3}">
+                                <div class="invalid-feedback"></div>
+                                <small class="text-muted">3-digit room number (optional)</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="contact" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" id="contact"
+                                    placeholder="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]{10}"
+                                    required>
+                                <div class="invalid-feedback"></div>
+                                <small class="text-muted">10-digit mobile number</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="customerId" class="form-label">Customer ID</label>
+                                <input type="text" class="form-control" id="customerId"
+                                    placeholder="Enter your customer ID" required>
+                                <div class="invalid-feedback"></div>
+                                <small class="text-muted">Your customer ID</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Subject</label>
+                                <input type="text" class="form-control" id="subject"
+                                    placeholder="Brief subject of your feedback/complaint" maxlength="100" required>
+                                <div class="invalid-feedback"></div>
+                                <small class="text-muted">Maximum 100 characters</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Detailed Message</label>
+                                <textarea class="form-control" id="message" rows="5"
+                                    placeholder="Please provide detailed information about your feedback or complaint"
+                                    maxlength="500" required></textarea>
+                                <div class="invalid-feedback"></div>
+                                <small class="text-muted">Maximum 500 characters</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="priority" class="form-label">Priority Level</label>
+                                <select class="form-select" id="priority" required>
+                                    <option value="">Select Priority</option>
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                                <div class="invalid-feedback"></div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-paper-plane"></i> Submit Feedback
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer with Contact Information -->
+    <footer class="footer mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="fas fa-phone-alt"></i> Contact Information</h5>
+                    <p class="mb-1"><strong>Front Desk:</strong> +91-11-23456789</p>
+                    <p class="mb-1"><strong>Reservations:</strong> +91-11-23456790</p>
+                    <p class="mb-1"><strong>24/7 Helpline:</strong> +91-11-23456791</p>
+                    <p class="mb-0"><strong>Toll Free:</strong> 1800-123-4567</p>
+                </div>
+                <div class="col-md-4">
+                    <h5><i class="fas fa-envelope"></i> Email Addresses</h5>
+                    <p class="mb-1"><strong>General:</strong> info@grandhotel.com</p>
+                    <p class="mb-1"><strong>Reservations:</strong> reservations@grandhotel.com</p>
+                    <p class="mb-1"><strong>Support:</strong> support@grandhotel.com</p>
+                    <p class="mb-0"><strong>Complaints:</strong> complaints@grandhotel.com</p>
+                </div>
+                <div class="col-md-4">
+                    <h5><i class="fas fa-map-marker-alt"></i> Address & Hours</h5>
+                    <p class="mb-1">
+                        <strong>Grand Hotel</strong><br>
+                        123, Connaught Place<br>
+                        New Delhi - 110001<br>
+                        India
+                    </p>
+                    <p class="mb-0"><strong>Front Desk:</strong> 24/7</p>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2024 Grand Hotel Management System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Check if user is logged in
+        const currentUser = sessionStorage.getItem('currentUser');
+        const userRole = sessionStorage.getItem('userRole');
+
+        if (!currentUser || userRole !== 'customer') {
+            // Redirect to login if not authenticated
+            window.location.href = 'index.html';
+            return;
+        }
+
+        // Update welcome message
+        const welcomeUser = document.querySelector('.welcome-user');
+        if (welcomeUser) {
+            welcomeUser.textContent = `Welcome ${currentUser}`;
+        }
+        // Handle support form submission
+        document.getElementById('supportForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Clear previous errors
+            clearAllErrors();
+
+            // Get form values
+            const complaintType = document.getElementById('complaintType').value;
+            const roomNumber = document.getElementById('roomNumber').value;
+            const contact = document.getElementById('contact').value;
+            const customerId = document.getElementById('customerId').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            const priority = document.getElementById('priority').value;
+
+            let isValid = true;
+
+            // Validate complaint type
+            if (!complaintType) {
+                showError('complaintType', 'Please select a complaint type');
+                isValid = false;
+            }
+
+            // Validate room number if provided
+            if (roomNumber && !/^\d{3}$/.test(roomNumber)) {
+                showError('roomNumber', 'Room number must be 3 digits');
+                isValid = false;
+            }
+
+            // Validate contact
+            if (!validateMobile(contact)) {
+                showError('contact', 'Contact number must be 10 digits');
+                isValid = false;
+            }
+
+            // Validate customer ID
+            if (!customerId.trim()) {
+                showError('customerId', 'Customer ID is required');
+                isValid = false;
+            }
+
+            // Validate subject
+            if (!subject.trim()) {
+                showError('subject', 'Subject is required');
+                isValid = false;
+            }
+
+            // Validate message
+            if (!message.trim()) {
+                showError('message', 'Detailed message is required');
+                isValid = false;
+            }
+
+            // Validate priority
+            if (!priority) {
+                showError('priority', 'Please select a priority level');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            // Generate complaint ID
+            const complaintId = 'COMP' + Date.now();
+
+            // Show success message
+            showSuccess(`Your ${complaintType} has been submitted successfully. Your complaint ID is: ${complaintId}. We will contact you within 24 hours.`);
+
+            // Reset form
+            this.reset();
+
+            // Log complaint (in real application, this would be saved to database)
+            console.log('Complaint submitted:', {
+                complaintId,
+                complaintType,
+                roomNumber,
+                contact,
+                customerId,
+                subject,
+                message,
+                priority
+            });
+
+            // Save feedback to storage
+            const feedback = {
+                complaintId,
+                complaintType,
+                roomNumber,
+                contact,
+                customerId,
+                subject,
+                message,
+                priority,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+
+            // Initialize feedbacks array if not exists
+            if (!localStorage.getItem('feedbacks')) {
+                localStorage.setItem('feedbacks', JSON.stringify([]));
+            }
+
+            // Get existing feedbacks and add new one
+            const feedbacks = JSON.parse(localStorage.getItem('feedbacks'));
+            feedbacks.push(feedback);
+            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+        });
+
+        // Auto-fill user information if logged in
+        document.addEventListener('DOMContentLoaded', function () {
+            const userId = sessionStorage.getItem('userId');
+            const customerId = sessionStorage.getItem('customerId');
+
+            if (users && userId) {
+                const user = users.find(u => u.userId === userId);
+                if (user) {
+                    // Auto-fill contact and customer ID
+                    document.getElementById('contact').value = user.mobile.replace('+91-', '');
+                    document.getElementById('customerId').value = user.customerId;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

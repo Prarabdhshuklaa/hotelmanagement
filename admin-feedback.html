@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Feedbacks | Grand Hotel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="admin-dashboard.html">
+                <div>Admin</div>
+                <div><i class="fas fa-hotel"></i> Grand Hotel</div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-dashboard.html">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-reservation.html">
+                            <i class="fas fa-calendar-check"></i> Reservations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-billing.html">
+                            <i class="fas fa-file-invoice-dollar"></i> Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-history.html">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="room-status.html">
+                            <i class="fas fa-door-open"></i> Rooms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link active" href="admin-feedback.html">
+                            <i class="fas fa-headset"></i> Support
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    <span class="welcome-user me-3">Welcome Admin</span>
+                    <button class="btn btn-outline-light btn-sm logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container dashboard-container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-comments"></i> Feedbacks & Complaints</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Statistics Cards -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Feedbacks</h5>
+                                        <h2 id="totalFeedbacks">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pending</h5>
+                                        <h2 id="pendingFeedbacks">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">In Progress</h5>
+                                        <h2 id="inProgressFeedbacks">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Resolved</h5>
+                                        <h2 id="resolvedFeedbacks">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filter Section -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="statusFilter" class="form-label">Filter by Status</label>
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">All Feedbacks</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="in-progress">In Progress</option>
+                                    <option value="resolved">Resolved</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="priorityFilter" class="form-label">Filter by Priority</label>
+                                <select class="form-select" id="priorityFilter">
+                                    <option value="">All Priorities</option>
+                                    <option value="urgent">Urgent</option>
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="typeFilter" class="form-label">Filter by Type</label>
+                                <select class="form-select" id="typeFilter">
+                                    <option value="">All Types</option>
+                                    <option value="service">Service Issue</option>
+                                    <option value="room">Room Problem</option>
+                                    <option value="food">Food & Beverage</option>
+                                    <option value="billing">Billing Issue</option>
+                                    <option value="facility">Facility Problem</option>
+                                    <option value="staff">Staff Behavior</option>
+                                    <option value="suggestion">Suggestion</option>
+                                    <option value="compliment">Compliment</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Feedbacks Table -->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Complaint ID</th>
+                                        <th>Type</th>
+                                        <th>Priority</th>
+                                        <th>Customer ID</th>
+                                        <th>Room</th>
+                                        <th>Subject</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="feedbacksTable">
+                                    <!-- Feedbacks will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- No Feedbacks Message -->
+                        <div id="noFeedbacks" class="text-center py-5" style="display: none;">
+                            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Feedbacks Found</h5>
+                            <p class="text-muted">No customer feedbacks match the selected filters.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Details Modal -->
+    <div class="modal fade" id="feedbackDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Feedback Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="feedbackDetails">
+                        <!-- Feedback details will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Grand Hotel Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        let allFeedbacks = [];
+        let filteredFeedbacks = [];
+        let feedbackDetailsModal;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            feedbackDetailsModal = new bootstrap.Modal(document.getElementById('feedbackDetailsModal'));
+            loadFeedbacks();
+            updateStatistics();
+
+            // Add event listeners for filters
+            document.getElementById('statusFilter').addEventListener('change', filterFeedbacks);
+            document.getElementById('priorityFilter').addEventListener('change', filterFeedbacks);
+            document.getElementById('typeFilter').addEventListener('change', filterFeedbacks);
+        });
+
+        // Load all feedbacks
+        function loadFeedbacks() {
+            const feedbacks = JSON.parse(localStorage.getItem('feedbacks')) || [];
+            allFeedbacks = feedbacks;
+            filteredFeedbacks = feedbacks;
+            displayFeedbacks(filteredFeedbacks);
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const total = allFeedbacks.length;
+            const pending = allFeedbacks.filter(f => f.status === 'pending').length;
+            const inProgress = allFeedbacks.filter(f => f.status === 'in-progress').length;
+            const resolved = allFeedbacks.filter(f => f.status === 'resolved').length;
+
+            document.getElementById('totalFeedbacks').textContent = total;
+            document.getElementById('pendingFeedbacks').textContent = pending;
+            document.getElementById('inProgressFeedbacks').textContent = inProgress;
+            document.getElementById('resolvedFeedbacks').textContent = resolved;
+        }
+
+        // Filter feedbacks
+        function filterFeedbacks() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+
+            filteredFeedbacks = allFeedbacks.filter(feedback => {
+                const statusMatch = !statusFilter || feedback.priority === statusFilter;
+                const priorityMatch = !priorityFilter || feedback.priority === priorityFilter;
+                const typeMatch = !typeFilter || feedback.complaintType === typeFilter;
+                return statusMatch && priorityMatch && typeMatch;
+            });
+
+            displayFeedbacks(filteredFeedbacks);
+        }
+
+        // Display feedbacks in table
+        function displayFeedbacks(feedbacks) {
+            const tableBody = document.getElementById('feedbacksTable');
+            const noFeedbacks = document.getElementById('noFeedbacks');
+
+            if (feedbacks.length === 0) {
+                tableBody.innerHTML = '';
+                noFeedbacks.style.display = 'block';
+                return;
+            }
+
+            noFeedbacks.style.display = 'none';
+
+            let html = '';
+            feedbacks.forEach(feedback => {
+                const statusBadge = getStatusBadge(feedback.status);
+                const priorityBadge = getPriorityBadge(feedback.priority);
+                const typeBadge = getTypeBadge(feedback.complaintType);
+                const date = new Date(feedback.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                html += `
+                    <tr>
+                        <td><strong>${feedback.complaintId}</strong></td>
+                        <td>${typeBadge}</td>
+                        <td>${priorityBadge}</td>
+                        <td>${feedback.customerId || 'N/A'}</td>
+                        <td>${feedback.roomNumber || 'N/A'}</td>
+                        <td>${feedback.subject}</td>
+                        <td>${statusBadge}</td>
+                        <td>${date}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewFeedbackDetails('${feedback.complaintId}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            ${feedback.status === 'pending' ? `
+                                <button class="btn btn-sm btn-warning" onclick="updateFeedbackStatus('${feedback.complaintId}', 'in-progress')">
+                                    <i class="fas fa-play"></i> Start
+                                </button>
+                            ` : ''}
+                            ${feedback.status === 'in-progress' ? `
+                                <button class="btn btn-sm btn-success" onclick="updateFeedbackStatus('${feedback.complaintId}', 'resolved')">
+                                    <i class="fas fa-check"></i> Resolve
+                                </button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableBody.innerHTML = html;
+        }
+
+        // Get status badge HTML
+        function getStatusBadge(status) {
+            const badges = {
+                'pending': '<span class="badge bg-warning">Pending</span>',
+                'in-progress': '<span class="badge bg-info">In Progress</span>',
+                'resolved': '<span class="badge bg-success">Resolved</span>'
+            };
+            return badges[status] || status;
+        }
+
+        // Get priority badge HTML
+        function getPriorityBadge(priority) {
+            const badges = {
+                'urgent': '<span class="badge bg-danger">Urgent</span>',
+                'high': '<span class="badge bg-warning">High</span>',
+                'medium': '<span class="badge bg-info">Medium</span>',
+                'low': '<span class="badge bg-secondary">Low</span>'
+            };
+            return badges[priority] || priority;
+        }
+
+        // Get type badge HTML
+        function getTypeBadge(type) {
+            const types = {
+                'service': 'Service Issue',
+                'room': 'Room Problem',
+                'food': 'Food & Beverage',
+                'billing': 'Billing Issue',
+                'facility': 'Facility Problem',
+                'staff': 'Staff Behavior',
+                'suggestion': 'Suggestion',
+                'compliment': 'Compliment',
+                'other': 'Other'
+            };
+            return types[type] || type;
+        }
+
+        // View feedback details
+        function viewFeedbackDetails(complaintId) {
+            const feedback = allFeedbacks.find(f => f.complaintId === complaintId);
+            if (!feedback) return;
+
+            const detailsHtml = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Feedback Information</h6>
+                        <p><strong>Complaint ID:</strong> ${feedback.complaintId}</p>
+                        <p><strong>Type:</strong> ${getTypeBadge(feedback.complaintType)}</p>
+                        <p><strong>Priority:</strong> ${getPriorityBadge(feedback.priority)}</p>
+                        <p><strong>Status:</strong> ${getStatusBadge(feedback.status)}</p>
+                        <p><strong>Submitted:</strong> ${new Date(feedback.createdAt).toLocaleString()}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Customer Information</h6>
+                        <p><strong>Customer ID:</strong> ${feedback.customerId || 'N/A'}</p>
+                        <p><strong>Room Number:</strong> ${feedback.roomNumber || 'N/A'}</p>
+                        <p><strong>Contact:</strong> ${feedback.contact || 'N/A'}</p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Subject</h6>
+                        <p>${feedback.subject}</p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Detailed Message</h6>
+                        <div class="border rounded p-3 bg-light">
+                            <p>${feedback.message}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('feedbackDetails').innerHTML = detailsHtml;
+            feedbackDetailsModal.show();
+        }
+
+        // Update feedback status
+        function updateFeedbackStatus(complaintId, newStatus) {
+            const feedback = allFeedbacks.find(f => f.complaintId === complaintId);
+            if (feedback) {
+                feedback.status = newStatus;
+
+                // Update localStorage
+                localStorage.setItem('feedbacks', JSON.stringify(allFeedbacks));
+
+                // Reload data
+                loadFeedbacks();
+                updateStatistics();
+
+                // Show success message
+                const statusText = newStatus === 'in-progress' ? 'started processing' : 'resolved';
+                showSuccess(`Feedback ${complaintId} has been ${statusText}.`);
+            }
+        }
+    </script>
+</body>
+
+</html>

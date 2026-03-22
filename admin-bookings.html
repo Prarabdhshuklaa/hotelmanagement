@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System - Admin Bookings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="admin-dashboard.html">
+                <div>Admin</div>
+                <div><i class="fas fa-hotel"></i> Grand Hotel</div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-dashboard.html">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-reservation.html">
+                            <i class="fas fa-calendar-check"></i> Reservations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-billing.html">
+                            <i class="fas fa-file-invoice-dollar"></i> Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-history.html">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="room-status.html">
+                            <i class="fas fa-door-open"></i> Rooms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="admin-bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-feedback.html">
+                            <i class="fas fa-headset"></i> Support
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    <span class="welcome-user me-3">Welcome Admin</span>
+                    <button class="btn btn-outline-light btn-sm logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container dashboard-container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4><i class="fas fa-book"></i> All Bookings Management</h4>
+                        <div>
+                            <button class="btn btn-sm btn-success" onclick="window.print()">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="btn btn-sm btn-primary ms-2" onclick="exportBookings()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="btn btn-sm btn-info ms-2" onclick="refreshBookings()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Statistics Cards -->
+                        <div class="row mb-4">
+                            <div class="col-md-2">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-calendar-check text-primary fa-2x"></i>
+                                        <h6 class="card-title">Total</h6>
+                                        <h5 class="text-primary" id="totalBookings">0</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-clock text-warning fa-2x"></i>
+                                        <h6 class="card-title">Today</h6>
+                                        <h5 class="text-warning" id="todayBookings">0</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-sign-in-alt text-success fa-2x"></i>
+                                        <h6 class="card-title">Check-ins</h6>
+                                        <h5 class="text-success" id="checkIns">0</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-sign-out-alt text-info fa-2x"></i>
+                                        <h6 class="card-title">Check-outs</h6>
+                                        <h5 class="text-info" id="checkOuts">0</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-hourglass-half text-danger fa-2x"></i>
+                                        <h6 class="card-title">Pending</h6>
+                                        <h5 class="text-danger" id="pendingBookings">0</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-rupee-sign text-success fa-2x"></i>
+                                        <h6 class="card-title">Revenue</h6>
+                                        <h5 class="text-success" id="totalRevenue">₹0</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filter Options -->
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <label for="statusFilter" class="form-label">Status</label>
+                                <select class="form-select" id="statusFilter" onchange="filterBookings()">
+                                    <option value="all">All</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="checked-in">Checked In</option>
+                                    <option value="checked-out">Checked Out</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="dateFilter" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="dateFilter" onchange="filterBookings()">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="roomTypeFilter" class="form-label">Room Type</label>
+                                <select class="form-select" id="roomTypeFilter" onchange="filterBookings()">
+                                    <option value="all">All Types</option>
+                                    <option value="standard">Standard</option>
+                                    <option value="deluxe">Deluxe</option>
+                                    <option value="suite">Suite</option>
+                                    <option value="presidential">Presidential</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="floorFilter" class="form-label">Floor</label>
+                                <select class="form-select" id="floorFilter" onchange="filterBookings()">
+                                    <option value="all">All Floors</option>
+                                    <option value="1">Floor 1</option>
+                                    <option value="2">Floor 2</option>
+                                    <option value="3">Floor 3</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="searchFilter" class="form-label">Search</label>
+                                <input type="text" class="form-control" id="searchFilter" placeholder="Booking ID"
+                                    onkeyup="filterBookings()">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="guestFilter" class="form-label">Guest Name</label>
+                                <input type="text" class="form-control" id="guestFilter" placeholder="Guest name"
+                                    onkeyup="filterBookings()">
+                            </div>
+                        </div>
+
+                        <!-- Bookings Table -->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Guest Name</th>
+                                        <th>User ID</th>
+                                        <th>Check-in</th>
+                                        <th>Check-out</th>
+                                        <th>Room</th>
+                                        <th>Room Type</th>
+                                        <th>Amount (₹)</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookingsTable">
+                                    <!-- Bookings will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- No Bookings Message -->
+                        <div id="noBookings" class="text-center py-5" style="display: none;">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Bookings Found</h5>
+                            <p class="text-muted">No bookings found matching the current criteria.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div class="modal fade" id="bookingDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Booking Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="bookingDetails">
+                    <!-- Details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="window.print()">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Booking Status Modal -->
+    <div class="modal fade" id="updateStatusModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Booking Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateStatusForm">
+                        <div class="mb-3">
+                            <label for="updateBookingId" class="form-label">Booking ID</label>
+                            <input type="text" class="form-control" id="updateBookingId" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="updateStatus" class="form-label">New Status</label>
+                            <select class="form-select" id="updateStatus" required>
+                                <option value="">Select Status</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="pending">Pending</option>
+                                <option value="checked-in">Checked In</option>
+                                <option value="checked-out">Checked Out</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="updateNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="updateNotes" rows="3"
+                                placeholder="Add any notes..."></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Update Status</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Grand Hotel Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        let allBookings = [];
+
+        // Generate booking data from actual reservations
+        function generateBookingData() {
+            const bookingData = [];
+            const statuses = ['confirmed', 'pending', 'checked-in', 'checked-out', 'cancelled'];
+
+            // Convert reservations to booking data
+            if (reservations && reservations.length > 0) {
+                reservations.forEach((reservation, index) => {
+                    const checkInDate = new Date(reservation.checkIn);
+                    const checkOutDate = new Date(reservation.checkOut);
+                    const today = new Date();
+
+                    // Determine status based on dates
+                    let status = 'confirmed';
+                    if (checkOutDate < today) {
+                        status = 'checked-out';
+                    } else if (checkInDate <= today && checkOutDate >= today) {
+                        status = 'checked-in';
+                    } else if (reservation.status === 'pending') {
+                        status = 'pending';
+                    } else if (reservation.status === 'rejected') {
+                        status = 'cancelled';
+                    }
+
+                    // Calculate amount
+                    const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+                    const roomRates = {
+                        'standard': 2000,
+                        'deluxe': 3000,
+                        'suite': 5000,
+                        'presidential': 8000
+                    };
+                    const roomRate = roomRates[reservation.roomType] || 3000;
+                    const amount = nights * roomRate;
+
+                    // Find user details
+                    const user = users.find(u => u.userId === reservation.userId);
+                    const userEmail = user ? user.email : 'guest@example.com';
+
+                    bookingData.push({
+                        bookingId: reservation.bookingId,
+                        guestName: reservation.name,
+                        userId: reservation.userId,
+                        checkIn: reservation.checkIn,
+                        checkOut: reservation.checkOut,
+                        roomNumber: reservation.roomNumber || 'N/A', // Use actual assigned room number
+                        roomType: reservation.roomType,
+                        amount: amount,
+                        status: status,
+                        contact: reservation.contact,
+                        email: userEmail
+                    });
+                });
+            }
+
+            // If no real data, create some sample data for demonstration
+            if (bookingData.length === 0) {
+                const sampleData = [
+                    {
+                        bookingId: 'BK20240322001',
+                        guestName: 'John Doe',
+                        userId: 'USR001',
+                        checkIn: '2024-03-22',
+                        checkOut: '2024-03-24',
+                        roomNumber: 101,
+                        roomType: 'deluxe',
+                        amount: 6000,
+                        status: 'confirmed',
+                        contact: '+91-9876543210',
+                        email: 'john@example.com'
+                    },
+                    {
+                        bookingId: 'BK20240321001',
+                        guestName: 'Jane Smith',
+                        userId: 'USR002',
+                        checkIn: '2024-03-21',
+                        checkOut: '2024-03-23',
+                        roomNumber: 205,
+                        roomType: 'suite',
+                        amount: 10000,
+                        status: 'checked-in',
+                        contact: '+91-9876543211',
+                        email: 'jane@example.com'
+                    }
+                ];
+                bookingData.push(...sampleData);
+            }
+
+            return bookingData.sort((a, b) => new Date(b.checkIn) - new Date(a.checkIn));
+        }
+
+        // Load bookings on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            allBookings = generateBookingData();
+            displayBookings(allBookings);
+            updateStatistics();
+        });
+
+        // Display bookings
+        function displayBookings(bookings) {
+            const bookingsTable = document.getElementById('bookingsTable');
+            const noBookings = document.getElementById('noBookings');
+
+            if (bookings.length === 0) {
+                bookingsTable.innerHTML = '';
+                noBookings.style.display = 'block';
+                return;
+            }
+
+            noBookings.style.display = 'none';
+
+            let html = '';
+            bookings.forEach(booking => {
+                const statusBadge = getStatusBadge(booking.status);
+                html += `
+                    <tr>
+                        <td><strong>${booking.bookingId}</strong></td>
+                        <td>${booking.guestName}</td>
+                        <td>${booking.userId}</td>
+                        <td>${formatDate(booking.checkIn)}</td>
+                        <td>${formatDate(booking.checkOut)}</td>
+                        <td>${booking.roomNumber}</td>
+                        <td>${getRoomTypeDisplay(booking.roomType)}</td>
+                        <td>₹${booking.amount.toLocaleString('en-IN')}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" onclick="viewBookingDetails('${booking.bookingId}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="updateBookingStatus('${booking.bookingId}', '${booking.status}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                ${booking.status === 'confirmed' ? `
+                                    <button class="btn btn-sm btn-success" onclick="checkInGuest('${booking.bookingId}')">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                    </button>
+                                ` : ''}
+                                ${booking.status === 'checked-in' ? `
+                                    <button class="btn btn-sm btn-primary" onclick="checkOutGuest('${booking.bookingId}')">
+                                        <i class="fas fa-sign-out-alt"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            bookingsTable.innerHTML = html;
+        }
+
+        // Filter bookings
+        function filterBookings() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const roomTypeFilter = document.getElementById('roomTypeFilter').value;
+            const floorFilter = document.getElementById('floorFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+            const guestFilter = document.getElementById('guestFilter').value.toLowerCase();
+
+            let filteredBookings = allBookings;
+
+            if (statusFilter !== 'all') {
+                filteredBookings = filteredBookings.filter(b => b.status === statusFilter);
+            }
+
+            if (dateFilter) {
+                filteredBookings = filteredBookings.filter(b => b.checkIn === dateFilter);
+            }
+
+            if (roomTypeFilter !== 'all') {
+                filteredBookings = filteredBookings.filter(b => b.roomType === roomTypeFilter);
+            }
+
+            if (floorFilter !== 'all') {
+                filteredBookings = filteredBookings.filter(b => {
+                    const floor = Math.floor(b.roomNumber / 100);
+                    return floor == floorFilter;
+                });
+            }
+
+            if (searchFilter) {
+                filteredBookings = filteredBookings.filter(b =>
+                    b.bookingId.toLowerCase().includes(searchFilter)
+                );
+            }
+
+            if (guestFilter) {
+                filteredBookings = filteredBookings.filter(b =>
+                    b.guestName.toLowerCase().includes(guestFilter)
+                );
+            }
+
+            displayBookings(filteredBookings);
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const today = new Date().toISOString().split('T')[0];
+            const total = allBookings.length;
+            const todayBookings = allBookings.filter(b => b.checkIn === today).length;
+            const checkIns = allBookings.filter(b => b.status === 'checked-in').length;
+            const checkOuts = allBookings.filter(b => b.status === 'checked-out').length;
+            const pending = allBookings.filter(b => b.status === 'pending').length;
+            const revenue = allBookings
+                .filter(b => b.status === 'checked-out')
+                .reduce((sum, b) => sum + b.amount, 0);
+
+            document.getElementById('totalBookings').textContent = total;
+            document.getElementById('todayBookings').textContent = todayBookings;
+            document.getElementById('checkIns').textContent = checkIns;
+            document.getElementById('checkOuts').textContent = checkOuts;
+            document.getElementById('pendingBookings').textContent = pending;
+            document.getElementById('totalRevenue').textContent = '₹' + revenue.toLocaleString('en-IN');
+        }
+
+        // View booking details
+        function viewBookingDetails(bookingId) {
+            const booking = allBookings.find(b => b.bookingId === bookingId);
+            if (!booking) return;
+
+            const detailsHtml = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Booking Information</h6>
+                        <p><strong>Booking ID:</strong> ${booking.bookingId}</p>
+                        <p><strong>Status:</strong> ${getStatusBadge(booking.status)}</p>
+                        <p><strong>Check-in:</strong> ${formatDate(booking.checkIn)}</p>
+                        <p><strong>Check-out:</strong> ${formatDate(booking.checkOut)}</p>
+                        <p><strong>Total Amount:</strong> ₹${booking.amount.toLocaleString('en-IN')}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Guest Information</h6>
+                        <p><strong>Name:</strong> ${booking.guestName}</p>
+                        <p><strong>User ID:</strong> ${booking.userId}</p>
+                        <p><strong>Contact:</strong> ${booking.contact}</p>
+                        <p><strong>Email:</strong> ${booking.email}</p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h6>Room Information</h6>
+                        <p><strong>Room Number:</strong> ${booking.roomNumber}</p>
+                        <p><strong>Room Type:</strong> ${getRoomTypeDisplay(booking.roomType)}</p>
+                        <p><strong>Floor:</strong> ${Math.floor(booking.roomNumber / 100)}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Payment Status</h6>
+                        <p><strong>Payment Status:</strong> ${booking.status === 'checked-out' ?
+                    '<span class="badge bg-success">Paid</span>' :
+                    '<span class="badge bg-warning">Pending</span>'}
+                        </p>
+                        <p><strong>Payment Mode:</strong> ${booking.status === 'checked-out' ? 'Credit Card' : 'Not specified'}</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('bookingDetails').innerHTML = detailsHtml;
+
+            const modal = new bootstrap.Modal(document.getElementById('bookingDetailsModal'));
+            modal.show();
+        }
+
+        // Update booking status
+        function updateBookingStatus(bookingId, currentStatus) {
+            document.getElementById('updateBookingId').value = bookingId;
+            document.getElementById('updateStatus').value = currentStatus;
+
+            const modal = new bootstrap.Modal(document.getElementById('updateStatusModal'));
+            modal.show();
+        }
+
+        // Handle update status form
+        document.getElementById('updateStatusForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const bookingId = document.getElementById('updateBookingId').value;
+            const newStatus = document.getElementById('updateStatus').value;
+            const notes = document.getElementById('updateNotes').value;
+
+            if (!newStatus) {
+                showErrorAlert('Please select a status');
+                return;
+            }
+
+            // Update booking status
+            const booking = allBookings.find(b => b.bookingId === bookingId);
+            if (booking) {
+                booking.status = newStatus;
+                displayBookings(allBookings);
+                updateStatistics();
+
+                // Close modal
+                bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
+
+                showSuccess(`Booking ${bookingId} status updated to ${newStatus}`);
+
+                // Reset form
+                this.reset();
+            }
+        });
+
+        // Check in guest
+        function checkInGuest(bookingId) {
+            if (confirm('Check in guest for booking ' + bookingId + '?')) {
+                const booking = allBookings.find(b => b.bookingId === bookingId);
+                if (booking) {
+                    booking.status = 'checked-in';
+                    displayBookings(allBookings);
+                    updateStatistics();
+                    showSuccess(`Guest checked in for booking ${bookingId}`);
+                }
+            }
+        }
+
+        // Check out guest
+        function checkOutGuest(bookingId) {
+            if (confirm('Check out guest for booking ' + bookingId + '?')) {
+                const booking = allBookings.find(b => b.bookingId === bookingId);
+                if (booking) {
+                    booking.status = 'checked-out';
+                    displayBookings(allBookings);
+                    updateStatistics();
+                    showSuccess(`Guest checked out for booking ${bookingId}`);
+                }
+            }
+        }
+
+        // Refresh bookings
+        function refreshBookings() {
+            allBookings = generateBookingData();
+            displayBookings(allBookings);
+            updateStatistics();
+            showSuccess('Bookings refreshed successfully');
+        }
+
+        // Export bookings
+        function exportBookings() {
+            showSuccess('Exporting bookings data...');
+            // In a real application, this would generate and download a CSV/PDF file
+        }
+
+        // Helper functions
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'confirmed':
+                    return '<span class="badge bg-success">Confirmed</span>';
+                case 'pending':
+                    return '<span class="badge bg-warning">Pending</span>';
+                case 'checked-in':
+                    return '<span class="badge bg-primary">Checked In</span>';
+                case 'checked-out':
+                    return '<span class="badge bg-info">Checked Out</span>';
+                case 'cancelled':
+                    return '<span class="badge bg-danger">Cancelled</span>';
+                default:
+                    return '<span class="badge bg-secondary">Unknown</span>';
+            }
+        }
+
+        function getRoomTypeDisplay(roomType) {
+            const types = {
+                'standard': 'Standard Room',
+                'deluxe': 'Deluxe Room',
+                'suite': 'Suite',
+                'presidential': 'Presidential Suite'
+            };
+            return types[roomType] || roomType;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+    </script>
+</body>
+
+</html>

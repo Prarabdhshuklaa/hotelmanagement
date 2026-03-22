@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System - Billing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-hotel"></i> Grand Hotel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reservation.html">
+                            <i class="fas fa-calendar-plus"></i> Reservation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="billing.html">
+                            <i class="fas fa-file-invoice"></i> Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="support.html">
+                            <i class="fas fa-headset"></i> Customer Support
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    <span class="welcome-user me-3">Welcome Guest</span>
+                    <button class="btn btn-outline-light btn-sm logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container dashboard-container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Current Bill -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-file-invoice"></i> Current Bill</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="billing-summary">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <h6>Guest Information</h6>
+                                    <p><strong>Name:</strong> <span id="guestName">John Doe</span></p>
+                                    <p><strong>Room:</strong> <span id="roomNumber">101</span></p>
+                                    <p><strong>Check-in:</strong> <span id="checkInDate">2024-03-20</span></p>
+                                    <p><strong>Check-out:</strong> <span id="checkOutDate">2024-03-22</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Booking Details</h6>
+                                    <p><strong>Booking ID:</strong> <span id="bookingId">BK20240320001</span></p>
+                                    <p><strong>Room Type:</strong> <span id="roomType">Deluxe Room</span></p>
+                                    <p><strong>Nights:</strong> <span id="numberOfNights">2</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bill Breakdown -->
+                        <h5 class="mb-3">Bill Breakdown</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th class="text-end">Quantity</th>
+                                    <th class="text-end">Rate (₹)</th>
+                                    <th class="text-end">Amount (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Room Charges (Deluxe Room)</td>
+                                    <td class="text-end">2</td>
+                                    <td class="text-end">3,000</td>
+                                    <td class="text-end">6,000</td>
+                                </tr>
+                                <tr>
+                                    <td>Room Service</td>
+                                    <td class="text-end">3</td>
+                                    <td class="text-end">500</td>
+                                    <td class="text-end">1,500</td>
+                                </tr>
+                                <tr>
+                                    <td>Laundry Service</td>
+                                    <td class="text-end">1</td>
+                                    <td class="text-end">300</td>
+                                    <td class="text-end">300</td>
+                                </tr>
+                                <tr>
+                                    <td>Mini Bar</td>
+                                    <td class="text-end">-</td>
+                                    <td class="text-end">-</td>
+                                    <td class="text-end">800</td>
+                                </tr>
+                                <tr class="table-active">
+                                    <td colspan="3"><strong>Subtotal</strong></td>
+                                    <td class="text-end"><strong>8,600</strong></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">GST (18%)</td>
+                                    <td class="text-end">1,548</td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td colspan="3"><strong>Total Amount</strong></td>
+                                    <td class="text-end bill-amount">10,148</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Payment Options -->
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <div>
+                                <button class="btn btn-success" onclick="window.location.href='payment.html'">
+                                    <i class="fas fa-credit-card"></i> Pay Bill
+                                </button>
+                                <button class="btn btn-secondary ms-2" onclick="window.print()">
+                                    <i class="fas fa-print"></i> Print Bill
+                                </button>
+                            </div>
+                            <div>
+                                <small class="text-muted">Generated on: <span id="billDate"></span></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment History -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-history"></i> Payment History</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Transaction ID</th>
+                                        <th>Date</th>
+                                        <th>Amount (₹)</th>
+                                        <th>Mode</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="paymentHistoryTable">
+                                    <!-- Payment history will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="noPaymentHistory" class="text-center py-4" style="display: none;">
+                            <i class="fas fa-receipt fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">No payment history found</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Services -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-concierge-bell"></i> Additional Services</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Available Services</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-utensils text-primary"></i> Room Service - ₹500 per order</li>
+                                    <li><i class="fas fa-tshirt text-info"></i> Laundry Service - ₹300 per load</li>
+                                    <li><i class="fas fa-glass-martini text-warning"></i> Mini Bar - Variable charges
+                                    </li>
+                                    <li><i class="fas fa-wifi text-success"></i> High-Speed Wi-Fi - Free</li>
+                                    <li><i class="fas fa-dumbbell text-danger"></i> Gym Access - Free</li>
+                                    <li><i class="fas fa-swimming-pool text-primary"></i> Pool Access - Free</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Request Additional Service</h6>
+                                <form id="serviceRequestForm">
+                                    <div class="mb-3">
+                                        <label for="serviceType" class="form-label">Service Type</label>
+                                        <select class="form-select" id="serviceType" required>
+                                            <option value="">Select Service</option>
+                                            <option value="room-service">Room Service</option>
+                                            <option value="laundry">Laundry Service</option>
+                                            <option value="spa">Spa Treatment</option>
+                                            <option value="transport">Airport Transfer</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="serviceNotes" class="form-label">Special Instructions</label>
+                                        <textarea class="form-control" id="serviceNotes" rows="2"
+                                            placeholder="Any special requirements..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i> Request Service
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Grand Hotel Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Check if user is logged in
+        const currentUser = sessionStorage.getItem('currentUser');
+        const userRole = sessionStorage.getItem('userRole');
+
+        if (!currentUser || userRole !== 'customer') {
+            // Redirect to login if not authenticated
+            window.location.href = 'index.html';
+            return;
+        }
+
+        // Update welcome message
+        const welcomeUser = document.querySelector('.welcome-user');
+        if (welcomeUser) {
+            welcomeUser.textContent = `Welcome ${currentUser}`;
+        }
+        // Load billing information
+        document.addEventListener('DOMContentLoaded', function () {
+            loadBillingInfo();
+            loadPaymentHistory();
+            setBillDate();
+        });
+
+        // Load billing information
+        function loadBillingInfo() {
+            const userId = sessionStorage.getItem('userId');
+            const customerId = sessionStorage.getItem('customerId');
+
+            // Get user's active reservation
+            const activeReservation = reservations.find(r =>
+                r.userId === userId && r.status === 'approved'
+            );
+
+            if (activeReservation) {
+                document.getElementById('guestName').textContent = activeReservation.name;
+                document.getElementById('bookingId').textContent = activeReservation.bookingId;
+                document.getElementById('checkInDate').textContent = formatDate(activeReservation.checkIn);
+                document.getElementById('checkOutDate').textContent = formatDate(activeReservation.checkOut);
+                document.getElementById('roomType').textContent = getRoomTypeDisplay(activeReservation.roomType);
+
+                // Calculate nights
+                const checkIn = new Date(activeReservation.checkIn);
+                const checkOut = new Date(activeReservation.checkOut);
+                const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                document.getElementById('numberOfNights').textContent = nights;
+
+                // Assign room number (mock)
+                document.getElementById('roomNumber').textContent = Math.floor(Math.random() * 300) + 100;
+            } else {
+                // Show no active reservation message
+                document.querySelector('.card-body').innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-file-invoice fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Active Bill</h5>
+                        <p class="text-muted">You don't have any active reservations or pending bills.</p>
+                        <a href="reservation.html" class="btn btn-primary">Make a Reservation</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Load payment history
+        function loadPaymentHistory() {
+            const userId = sessionStorage.getItem('userId');
+            const userPayments = payments.filter(p => p.userId === userId);
+
+            const tableBody = document.getElementById('paymentHistoryTable');
+            const noHistory = document.getElementById('noPaymentHistory');
+
+            if (userPayments.length === 0) {
+                tableBody.innerHTML = '';
+                noHistory.style.display = 'block';
+                return;
+            }
+
+            noHistory.style.display = 'none';
+
+            let html = '';
+            userPayments.forEach(payment => {
+                html += `
+                    <tr>
+                        <td>${payment.transactionId}</td>
+                        <td>${formatDate(payment.createdAt)}</td>
+                        <td>₹${payment.amount}</td>
+                        <td>${payment.paymentMode}</td>
+                        <td><span class="badge bg-success">Paid</span></td>
+                    </tr>
+                `;
+            });
+
+            tableBody.innerHTML = html;
+        }
+
+        // Set current bill date
+        function setBillDate() {
+            const today = new Date();
+            document.getElementById('billDate').textContent = today.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Handle service request form
+        document.getElementById('serviceRequestForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const serviceType = document.getElementById('serviceType').value;
+            const serviceNotes = document.getElementById('serviceNotes').value;
+
+            if (serviceType) {
+                showSuccess(`Service request for ${serviceType} has been submitted. Our staff will contact you shortly.`);
+                this.reset();
+            }
+        });
+
+        // Format date helper
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Get room type display helper
+        function getRoomTypeDisplay(roomType) {
+            const types = {
+                'standard': 'Standard Room',
+                'deluxe': 'Deluxe Room',
+                'suite': 'Suite',
+                'presidential': 'Presidential Suite'
+            };
+            return types[roomType] || roomType;
+        }
+    </script>
+</body>
+
+</html>

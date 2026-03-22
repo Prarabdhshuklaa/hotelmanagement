@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System - My Bookings</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-hotel"></i> Grand Hotel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reservation.html">
+                            <i class="fas fa-calendar-plus"></i> Reservation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="billing.html">
+                            <i class="fas fa-file-invoice"></i> Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="support.html">
+                            <i class="fas fa-headset"></i> Customer Support
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    <span class="welcome-user me-3">Welcome Guest</span>
+                    <button class="btn btn-outline-light btn-sm logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container dashboard-container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4><i class="fas fa-book"></i> My Upcoming Bookings</h4>
+                        <div>
+                            <button class="btn btn-sm btn-success" onclick="window.print()">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="btn btn-sm btn-primary ms-2" onclick="downloadBookings()">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Quick Stats -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-calendar-check text-primary fa-2x"></i>
+                                        <h6 class="card-title">Upcoming Bookings</h6>
+                                        <h4 class="text-primary" id="upcomingCount">0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-clock text-warning fa-2x"></i>
+                                        <h6 class="card-title">Next Check-in</h6>
+                                        <h5 class="text-warning" id="nextCheckIn">-</h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <i class="fas fa-rupee-sign text-success fa-2x"></i>
+                                        <h6 class="card-title">Total Value</h6>
+                                        <h4 class="text-success" id="totalValue">₹0</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filter Options -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="statusFilter" class="form-label">Filter by Status</label>
+                                <select class="form-select" id="statusFilter" onchange="filterBookings()">
+                                    <option value="all">All Bookings</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="checked-in">Checked In</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="monthFilter" class="form-label">Filter by Month</label>
+                                <input type="month" class="form-control" id="monthFilter" onchange="filterBookings()">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="searchFilter" class="form-label">Search Booking ID</label>
+                                <input type="text" class="form-control" id="searchFilter" placeholder="Enter Booking ID"
+                                    onkeyup="filterBookings()">
+                            </div>
+                        </div>
+
+                        <!-- Bookings Table -->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Check-in Date</th>
+                                        <th>Check-out Date</th>
+                                        <th>Room Number</th>
+                                        <th>Room Type</th>
+                                        <th>Amount (₹)</th>
+                                        <th>Status</th>
+                                        <th>Days Remaining</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bookingsTable">
+                                    <!-- Bookings will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- No Bookings Message -->
+                        <div id="noBookings" class="text-center py-5" style="display: none;">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Upcoming Bookings</h5>
+                            <p class="text-muted">You don't have any upcoming reservations.</p>
+                            <a href="reservation.html" class="btn btn-primary">Make a New Reservation</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Tips -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-lightbulb"></i> Booking Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-check-circle text-success"></i> Before Check-in</h6>
+                                <ul>
+                                    <li>Confirm your booking 24 hours before arrival</li>
+                                    <li>Carry a valid ID proof for check-in</li>
+                                    <li>Arrive after 2:00 PM for early check-in availability</li>
+                                    <li>Contact hotel for special requests</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-info-circle text-info"></i> During Stay</h6>
+                                <ul>
+                                    <li>Check-out time is 11:00 AM</li>
+                                    <li>Room service available 24/7</li>
+                                    <li>Keep valuables in the room safe</li>
+                                    <li>Contact reception for any assistance</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div class="modal fade" id="bookingDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Booking Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="bookingDetails">
+                    <!-- Details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="window.print()">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modify Booking Modal -->
+    <div class="modal fade" id="modifyBookingModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modify Booking</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="modifyBookingForm">
+                        <div class="mb-3">
+                            <label for="modifyBookingId" class="form-label">Booking ID</label>
+                            <input type="text" class="form-control" id="modifyBookingId" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modifyCheckIn" class="form-label">New Check-in Date</label>
+                            <input type="date" class="form-control" id="modifyCheckIn" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modifyCheckOut" class="form-label">New Check-out Date</label>
+                            <input type="date" class="form-control" id="modifyCheckOut" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modifyReason" class="form-label">Reason for Modification</label>
+                            <textarea class="form-control" id="modifyReason" rows="3" required></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Request Modification</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Grand Hotel Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Check if user is logged in
+        const currentUser = sessionStorage.getItem('currentUser');
+        const userRole = sessionStorage.getItem('userRole');
+
+        if (!currentUser || userRole !== 'customer') {
+            // Redirect to login if not authenticated
+            window.location.href = 'index.html';
+            return;
+        }
+
+        // Update welcome message
+        const welcomeUser = document.querySelector('.welcome-user');
+        if (welcomeUser) {
+            welcomeUser.textContent = `Welcome ${currentUser}`;
+        }
+        let allBookings = [];
+
+        // Load upcoming bookings on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            loadUpcomingBookings();
+        });
+
+        // Load upcoming bookings
+        function loadUpcomingBookings() {
+            const userId = sessionStorage.getItem('userId');
+            const bookingsTable = document.getElementById('bookingsTable');
+            const noBookings = document.getElementById('noBookings');
+
+            // Get user's reservations
+            const userReservations = reservations.filter(r => r.userId === userId);
+
+            // Convert to upcoming bookings format
+            allBookings = userReservations.map(reservation => {
+                const checkIn = new Date(reservation.checkIn);
+                const checkOut = new Date(reservation.checkOut);
+                const today = new Date();
+
+                // Only include future bookings
+                if (checkIn <= today) return null;
+
+                // Calculate amount
+                const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                const roomRates = {
+                    'standard': 2000,
+                    'deluxe': 3000,
+                    'suite': 5000,
+                    'presidential': 8000
+                };
+                const roomRate = roomRates[reservation.roomType] || 3000;
+                const amount = nights * roomRate;
+
+                // Calculate days remaining
+                const daysRemaining = Math.ceil((checkIn - today) / (1000 * 60 * 60 * 24));
+
+                // Determine status
+                let status = 'confirmed';
+                if (reservation.status === 'pending') {
+                    status = 'pending';
+                } else if (daysRemaining <= 1) {
+                    status = 'checked-in';
+                }
+
+                return {
+                    bookingId: reservation.bookingId,
+                    checkIn: reservation.checkIn,
+                    checkOut: reservation.checkOut,
+                    roomNumber: Math.floor(Math.random() * 300) + 100,
+                    roomType: reservation.roomType,
+                    amount: amount,
+                    status: status,
+                    daysRemaining: daysRemaining,
+                    name: reservation.name,
+                    contact: reservation.contact
+                };
+            }).filter(booking => booking !== null);
+
+            // Add mock upcoming bookings if user has no reservations
+            if (allBookings.length === 0) {
+                allBookings = generateMockBookings();
+            }
+
+            displayBookings(allBookings);
+            updateStatistics();
+        }
+
+        // Generate mock upcoming bookings
+        function generateMockBookings() {
+            const today = new Date();
+            const mockBookings = [
+                {
+                    bookingId: 'BK20240325001',
+                    checkIn: new Date(today.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    checkOut: new Date(today.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    roomNumber: 101,
+                    roomType: 'deluxe',
+                    amount: 6000,
+                    status: 'confirmed',
+                    daysRemaining: 3,
+                    name: 'John Doe',
+                    contact: '+91-9876543210'
+                },
+                {
+                    bookingId: 'BK20240401001',
+                    checkIn: new Date(today.getTime() + 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    checkOut: new Date(today.getTime() + 12 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    roomNumber: 205,
+                    roomType: 'suite',
+                    amount: 10000,
+                    status: 'confirmed',
+                    daysRemaining: 10,
+                    name: 'John Doe',
+                    contact: '+91-9876543210'
+                },
+                {
+                    bookingId: 'BK20240415001',
+                    checkIn: new Date(today.getTime() + 25 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    checkOut: new Date(today.getTime() + 27 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    roomNumber: 301,
+                    roomType: 'presidential',
+                    amount: 16000,
+                    status: 'pending',
+                    daysRemaining: 25,
+                    name: 'John Doe',
+                    contact: '+91-9876543210'
+                }
+            ];
+
+            return mockBookings;
+        }
+
+        // Display bookings
+        function displayBookings(bookings) {
+            const bookingsTable = document.getElementById('bookingsTable');
+            const noBookings = document.getElementById('noBookings');
+
+            if (bookings.length === 0) {
+                bookingsTable.innerHTML = '';
+                noBookings.style.display = 'block';
+                return;
+            }
+
+            noBookings.style.display = 'none';
+
+            let html = '';
+            bookings.forEach(booking => {
+                const statusBadge = getStatusBadge(booking.status);
+                const daysRemainingBadge = getDaysRemainingBadge(booking.daysRemaining);
+
+                html += `
+                    <tr>
+                        <td><strong>${booking.bookingId}</strong></td>
+                        <td>${formatDate(booking.checkIn)}</td>
+                        <td>${formatDate(booking.checkOut)}</td>
+                        <td>${booking.roomNumber}</td>
+                        <td>${getRoomTypeDisplay(booking.roomType)}</td>
+                        <td>₹${booking.amount.toLocaleString('en-IN')}</td>
+                        <td>${statusBadge}</td>
+                        <td>${daysRemainingBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewBookingDetails('${booking.bookingId}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-warning ms-1" onclick="modifyBooking('${booking.bookingId}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger ms-1" onclick="cancelBooking('${booking.bookingId}')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            bookingsTable.innerHTML = html;
+        }
+
+        // Filter bookings
+        function filterBookings() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const monthFilter = document.getElementById('monthFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+            let filteredBookings = allBookings;
+
+            if (statusFilter !== 'all') {
+                filteredBookings = filteredBookings.filter(b => b.status === statusFilter);
+            }
+
+            if (monthFilter) {
+                filteredBookings = filteredBookings.filter(b => {
+                    const checkInDate = new Date(b.checkIn);
+                    const [year, month] = monthFilter.split('-');
+                    return checkInDate.getFullYear() == year && (checkInDate.getMonth() + 1) == month;
+                });
+            }
+
+            if (searchFilter) {
+                filteredBookings = filteredBookings.filter(b =>
+                    b.bookingId.toLowerCase().includes(searchFilter)
+                );
+            }
+
+            displayBookings(filteredBookings);
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const upcomingCount = allBookings.length;
+            const totalValue = allBookings.reduce((sum, b) => sum + b.amount, 0);
+
+            // Find next check-in
+            const nextBooking = allBookings
+                .filter(b => b.status === 'confirmed')
+                .sort((a, b) => a.daysRemaining - b.daysRemaining)[0];
+
+            document.getElementById('upcomingCount').textContent = upcomingCount;
+            document.getElementById('totalValue').textContent = '₹' + totalValue.toLocaleString('en-IN');
+            document.getElementById('nextCheckIn').textContent = nextBooking ?
+                formatDate(nextBooking.checkIn) : '-';
+        }
+
+        // View booking details
+        function viewBookingDetails(bookingId) {
+            const booking = allBookings.find(b => b.bookingId === bookingId);
+            if (!booking) return;
+
+            const detailsHtml = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Booking Information</h6>
+                        <p><strong>Booking ID:</strong> ${booking.bookingId}</p>
+                        <p><strong>Status:</strong> ${getStatusBadge(booking.status)}</p>
+                        <p><strong>Check-in:</strong> ${formatDate(booking.checkIn)}</p>
+                        <p><strong>Check-out:</strong> ${formatDate(booking.checkOut)}</p>
+                        <p><strong>Days Remaining:</strong> ${booking.daysRemaining} days</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Room Information</h6>
+                        <p><strong>Room Number:</strong> ${booking.roomNumber}</p>
+                        <p><strong>Room Type:</strong> ${getRoomTypeDisplay(booking.roomType)}</p>
+                        <p><strong>Total Amount:</strong> ₹${booking.amount.toLocaleString('en-IN')}</p>
+                        <p><strong>Guest Name:</strong> ${booking.name}</p>
+                        <p><strong>Contact:</strong> ${booking.contact}</p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Important Information</h6>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Check-in Time:</strong> 2:00 PM onwards<br>
+                            <strong>Check-out Time:</strong> 11:00 AM<br>
+                            <strong>ID Required:</strong> Valid government-issued ID proof<br>
+                            <strong>Contact:</strong> +91-11-23456789 for any changes
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('bookingDetails').innerHTML = detailsHtml;
+
+            const modal = new bootstrap.Modal(document.getElementById('bookingDetailsModal'));
+            modal.show();
+        }
+
+        // Modify booking
+        function modifyBooking(bookingId) {
+            const booking = allBookings.find(b => b.bookingId === bookingId);
+            if (!booking) return;
+
+            document.getElementById('modifyBookingId').value = booking.bookingId;
+            document.getElementById('modifyCheckIn').value = booking.checkIn;
+            document.getElementById('modifyCheckOut').value = booking.checkOut;
+
+            const modal = new bootstrap.Modal(document.getElementById('modifyBookingModal'));
+            modal.show();
+        }
+
+        // Handle modify booking form
+        document.getElementById('modifyBookingForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const bookingId = document.getElementById('modifyBookingId').value;
+            const newCheckIn = document.getElementById('modifyCheckIn').value;
+            const newCheckOut = document.getElementById('modifyCheckOut').value;
+            const reason = document.getElementById('modifyReason').value;
+
+            if (new Date(newCheckOut) <= new Date(newCheckIn)) {
+                showErrorAlert('Check-out date must be after check-in date');
+                return;
+            }
+
+            // Close modal
+            bootstrap.Modal.getInstance(document.getElementById('modifyBookingModal')).hide();
+
+            showSuccess(`Modification request for booking ${bookingId} has been submitted. We will contact you soon.`);
+
+            // Reset form
+            this.reset();
+        });
+
+        // Cancel booking
+        function cancelBooking(bookingId) {
+            if (confirm('Are you sure you want to cancel this booking? Cancellation charges may apply as per policy.')) {
+                const booking = allBookings.find(b => b.bookingId === bookingId);
+                if (booking) {
+                    // Remove booking from list
+                    allBookings = allBookings.filter(b => b.bookingId !== bookingId);
+                    displayBookings(allBookings);
+                    updateStatistics();
+                    showSuccess(`Booking ${bookingId} has been cancelled. Refund policy will be applied as per terms.`);
+                }
+            }
+        }
+
+        // Download bookings
+        function downloadBookings() {
+            showSuccess('Downloading booking details...');
+            // In a real application, this would generate and download a PDF file
+        }
+
+        // Helper functions
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'confirmed':
+                    return '<span class="badge bg-success">Confirmed</span>';
+                case 'pending':
+                    return '<span class="badge bg-warning">Pending</span>';
+                case 'checked-in':
+                    return '<span class="badge bg-primary">Checked In</span>';
+                default:
+                    return '<span class="badge bg-secondary">Unknown</span>';
+            }
+        }
+
+        function getDaysRemainingBadge(days) {
+            if (days <= 1) {
+                return '<span class="badge bg-danger">Today</span>';
+            } else if (days <= 3) {
+                return '<span class="badge bg-warning">' + days + ' days</span>';
+            } else {
+                return '<span class="badge bg-success">' + days + ' days</span>';
+            }
+        }
+
+        function getRoomTypeDisplay(roomType) {
+            const types = {
+                'standard': 'Standard Room',
+                'deluxe': 'Deluxe Room',
+                'suite': 'Suite',
+                'presidential': 'Presidential Suite'
+            };
+            return types[roomType] || roomType;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System - Admin Billing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="admin-dashboard.html">
+                <div>Admin</div>
+                <div><i class="fas fa-hotel"></i> Grand Hotel</div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-dashboard.html">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-reservation.html">
+                            <i class="fas fa-calendar-check"></i> Reservations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="admin-billing.html">
+                            <i class="fas fa-file-invoice-dollar"></i> Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-history.html">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="room-status.html">
+                            <i class="fas fa-door-open"></i> Rooms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-feedback.html">
+                            <i class="fas fa-headset"></i> Support
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    <span class="welcome-user me-3">Welcome Admin</span>
+                    <button class="btn btn-outline-light btn-sm logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container dashboard-container">
+        <div class="row">
+            <div class="col-12">
+                <!-- User ID Input -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4><i class="fas fa-file-invoice-dollar"></i> Billing Management</h4>
+                            <div>
+                                <button type="button" class="btn btn-info btn-sm" onclick="refreshBillingData()">
+                                    <i class="fas fa-sync"></i> Refresh Data
+                                </button>
+                                <span class="badge bg-success ms-2">Live</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form id="userIdForm">
+                            <div class="row align-items-end">
+                                <div class="col-md-6">
+                                    <label for="userIdInput" class="form-label">Enter User ID</label>
+                                    <input type="text" class="form-control" id="userIdInput"
+                                        placeholder="Enter User ID or Customer ID" required>
+                                    <div class="invalid-feedback"></div>
+                                    <small class="text-muted">Enter User ID or Customer ID to generate invoice</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i> Search
+                                    </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-secondary w-100" onclick="clearForm()">
+                                        <i class="fas fa-times"></i> Clear
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Invoice Details (Hidden by default) -->
+                <div id="invoiceSection" style="display: none;">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4><i class="fas fa-file-invoice"></i> Invoice Details</h4>
+                            <div>
+                                <button class="btn btn-success" onclick="generateInvoice()">
+                                    <i class="fas fa-download"></i> Generate Invoice
+                                </button>
+                                <button class="btn btn-primary ms-2" onclick="window.print()">
+                                    <i class="fas fa-print"></i> Print
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <!-- Guest Information -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h5>Guest Information</h5>
+                                    <div id="guestInfo">
+                                        <!-- Guest info will be loaded here -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Reservation Details</h5>
+                                    <div id="reservationInfo">
+                                        <!-- Reservation info will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Invoice Table -->
+                            <h5 class="mb-3">Charges Breakdown</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Description</th>
+                                            <th class="text-end">Quantity</th>
+                                            <th class="text-end">Rate (₹)</th>
+                                            <th class="text-end">Amount (₹)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoiceTableBody">
+                                        <!-- Invoice items will be loaded here -->
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="table-active">
+                                            <td colspan="3"><strong>Subtotal</strong></td>
+                                            <td class="text-end"><strong id="subtotal">0</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3">GST (18%)</td>
+                                            <td class="text-end" id="gst">0</td>
+                                        </tr>
+                                        <tr class="table-success">
+                                            <td colspan="3"><strong>Total Amount</strong></td>
+                                            <td class="text-end bill-amount" id="totalAmount">0</strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <!-- Payment Information -->
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <h5>Payment Information</h5>
+                                    <p><strong>Payment Status:</strong> <span id="paymentStatus"
+                                            class="badge bg-warning">Pending</span></p>
+                                    <p><strong>Payment Mode:</strong> <span id="paymentMode">Not specified</span></p>
+                                    <p><strong>Due Date:</strong> <span id="dueDate"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5>Invoice Details</h5>
+                                    <p><strong>Invoice Number:</strong> <span id="invoiceNumber"></span></p>
+                                    <p><strong>Invoice Date:</strong> <span id="invoiceDate"></span></p>
+                                    <p><strong>Generated By:</strong> <span id="generatedBy">Admin</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Invoices -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-history"></i> Recent Invoices</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice #</th>
+                                        <th>Guest Name</th>
+                                        <th>User ID</th>
+                                        <th>Amount (₹)</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentInvoicesTable">
+                                    <!-- Recent invoices will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="noInvoices" class="text-center py-4" style="display: none;">
+                            <i class="fas fa-file-invoice fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">No invoices found</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Billing Statistics -->
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-rupee-sign text-success fa-2x"></i>
+                                <h5 class="card-title">Today's Revenue</h5>
+                                <h3 class="text-success" id="todayRevenue">₹0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-file-invoice text-primary fa-2x"></i>
+                                <h5 class="card-title">Pending Invoices</h5>
+                                <h3 class="text-primary" id="pendingInvoices">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-check-circle text-success fa-2x"></i>
+                                <h5 class="card-title">Paid Today</h5>
+                                <h3 class="text-success" id="paidToday">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-chart-line text-warning fa-2x"></i>
+                                <h5 class="card-title">Monthly Revenue</h5>
+                                <h3 class="text-warning" id="monthlyRevenue">₹0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Grand Hotel Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        let currentUserData = null;
+
+        // Initialize page with real statistics
+        document.addEventListener('DOMContentLoaded', function () {
+            updateBillingStatistics();
+            loadRecentInvoices();
+        });
+
+        // Update billing statistics with real data
+        function updateBillingStatistics() {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+
+            // Calculate today's revenue from payments
+            const todayPayments = payments.filter(p => {
+                const paymentDate = new Date(p.createdAt);
+                return paymentDate.toDateString() === today.toDateString();
+            });
+
+            const todayRevenue = todayPayments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+
+            // Calculate monthly revenue
+            const monthlyPayments = payments.filter(p => {
+                const paymentDate = new Date(p.createdAt);
+                return paymentDate.getMonth() === currentMonth && paymentDate.getFullYear() === currentYear;
+            });
+
+            const monthlyRevenue = monthlyPayments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+
+            // Calculate pending invoices (approved reservations without payment)
+            const pendingReservations = reservations.filter(r => r.status === 'approved');
+            const pendingInvoices = pendingReservations.filter(reservation => {
+                return !payments.some(p => p.userId === reservation.userId);
+            }).length;
+
+            // Count paid today
+            const paidToday = todayPayments.length;
+
+            // Update DOM
+            document.getElementById('todayRevenue').textContent = `₹${todayRevenue.toLocaleString('en-IN')}`;
+            document.getElementById('monthlyRevenue').textContent = `₹${monthlyRevenue.toLocaleString('en-IN')}`;
+            document.getElementById('pendingInvoices').textContent = pendingInvoices;
+            document.getElementById('paidToday').textContent = paidToday;
+        }
+
+        // Load recent invoices with real data
+        function loadRecentInvoices() {
+            const recentInvoicesTable = document.getElementById('recentInvoicesTable');
+            const noInvoices = document.getElementById('noInvoices');
+
+            if (!recentInvoicesTable) return;
+
+            // Get all payments with user details
+            let invoiceData = payments.map(payment => {
+                const user = users.find(u => u.userId === payment.userId);
+                return {
+                    ...payment,
+                    userName: user ? user.name : 'Unknown',
+                    userEmail: user ? user.email : 'Unknown',
+                    userId: user ? user.userId : 'Unknown'
+                };
+            }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 10);
+
+            // If no real payments, create sample data from approved reservations
+            if (invoiceData.length === 0 && reservations.length > 0) {
+                const approvedReservations = reservations.filter(r => r.status === 'approved').slice(0, 5);
+                invoiceData = approvedReservations.map(reservation => {
+                    const user = users.find(u => u.userId === reservation.userId);
+                    const checkIn = new Date(reservation.checkIn);
+                    const checkOut = new Date(reservation.checkOut);
+                    const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+
+                    const roomRates = {
+                        'standard': 2000,
+                        'deluxe': 3000,
+                        'suite': 5000,
+                        'presidential': 8000
+                    };
+                    const roomRate = roomRates[reservation.roomType] || 2000;
+                    const amount = nights * roomRate;
+
+                    return {
+                        transactionId: 'INV' + Date.now() + Math.random().toString(36).substr(2, 5),
+                        userName: user ? user.name : 'Unknown',
+                        userEmail: user ? user.email : 'Unknown',
+                        userId: user ? user.userId : 'Unknown',
+                        amount: amount,
+                        createdAt: reservation.createdAt,
+                        paymentMode: 'Pending'
+                    };
+                });
+            }
+
+            if (invoiceData.length === 0) {
+                recentInvoicesTable.innerHTML = '';
+                noInvoices.style.display = 'block';
+                return;
+            }
+
+            noInvoices.style.display = 'none';
+
+            let html = '';
+            invoiceData.forEach(invoice => {
+                const date = new Date(invoice.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                const statusBadge = invoice.paymentMode === 'Pending' ?
+                    '<span class="badge bg-warning">Pending</span>' :
+                    '<span class="badge bg-success">Paid</span>';
+
+                html += `
+                    <tr>
+                        <td>${invoice.transactionId}</td>
+                        <td>${invoice.userName}</td>
+                        <td>${invoice.userId}</td>
+                        <td>₹${invoice.amount.toLocaleString('en-IN')}</td>
+                        <td>${date}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewInvoiceDetails('${invoice.transactionId}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            recentInvoicesTable.innerHTML = html;
+        }
+
+        // View invoice details
+        function viewInvoiceDetails(transactionId) {
+            const payment = payments.find(p => p.transactionId === transactionId);
+            if (!payment) return;
+
+            const user = users.find(u => u.userId === payment.userId);
+
+            alert(`Invoice Details:\n\nTransaction ID: ${payment.transactionId}\nCustomer: ${user ? user.name : 'Unknown'}\nAmount: ₹${payment.amount}\nPayment Mode: ${payment.paymentMode}\nDate: ${new Date(payment.createdAt).toLocaleString()}`);
+        }
+
+        // Refresh billing data
+        function refreshBillingData() {
+            updateBillingStatistics();
+            loadRecentInvoices();
+            showSuccess('Billing data refreshed successfully');
+        }
+
+        // Handle User ID form submission
+        document.getElementById('userIdForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const userIdInput = document.getElementById('userIdInput').value.trim();
+
+            if (!userIdInput) {
+                showErrorAlert('Please enter a User ID or Customer ID');
+                return;
+            }
+
+            // Find user by User ID or Customer ID
+            currentUserData = users.find(u =>
+                u.userId === userIdInput || u.customerId === userIdInput
+            );
+
+            if (!currentUserData) {
+                showErrorAlert('User not found. Please check the User ID or Customer ID.');
+                return;
+            }
+
+            // Load invoice details
+            loadInvoiceDetails();
+        });
+
+        // Load invoice details
+        function loadInvoiceDetails() {
+            if (!currentUserData) return;
+
+            // Show invoice section
+            document.getElementById('invoiceSection').style.display = 'block';
+
+            // Load guest information
+            const guestInfo = document.getElementById('guestInfo');
+            guestInfo.innerHTML = `
+                <p><strong>Name:</strong> ${currentUserData.name}</p>
+                <p><strong>Email:</strong> ${currentUserData.email}</p>
+                <p><strong>Mobile:</strong> ${currentUserData.mobile}</p>
+                <p><strong>Address:</strong> ${currentUserData.address}</p>
+                <p><strong>Customer ID:</strong> ${currentUserData.customerId}</p>
+            `;
+
+            // Find user's reservations
+            const userReservations = reservations.filter(r =>
+                r.userId === currentUserData.userId && r.status === 'approved'
+            );
+
+            const reservationInfo = document.getElementById('reservationInfo');
+
+            if (userReservations.length > 0) {
+                const latestReservation = userReservations[userReservations.length - 1];
+
+                // Calculate nights and room charges
+                const checkIn = new Date(latestReservation.checkIn);
+                const checkOut = new Date(latestReservation.checkOut);
+                const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+
+                const roomRates = {
+                    'standard': 2000,
+                    'deluxe': 3000,
+                    'suite': 5000,
+                    'presidential': 8000
+                };
+
+                const roomRate = roomRates[latestReservation.roomType] || 2000;
+                const roomCharges = nights * roomRate;
+
+                reservationInfo.innerHTML = `
+                    <p><strong>Booking ID:</strong> ${latestReservation.bookingId}</p>
+                    <p><strong>Room Type:</strong> ${getRoomTypeDisplay(latestReservation.roomType)}</p>
+                    <p><strong>Check-in:</strong> ${formatDate(latestReservation.checkIn)}</p>
+                    <p><strong>Check-out:</strong> ${formatDate(latestReservation.checkOut)}</p>
+                    <p><strong>Nights:</strong> ${nights}</p>
+                    <p><strong>Room Number:</strong> ${latestReservation.roomNumber || 'N/A'}</p>
+                `;
+
+                // Load invoice table
+                loadInvoiceTable(roomCharges);
+            } else {
+                reservationInfo.innerHTML = '<p class="text-muted">No active reservations found</p>';
+                loadInvoiceTable(0);
+            }
+
+            // Set invoice details
+            setInvoiceDetails();
+        }
+
+        // Load invoice table with real data
+        function loadInvoiceTable(roomCharges) {
+            const tableBody = document.getElementById('invoiceTableBody');
+
+            // Real billing items based on actual reservation
+            const services = [
+                { description: 'Room Charges', quantity: 1, rate: roomCharges, amount: roomCharges }
+            ];
+
+            // Add additional services only if there are actual charges
+            if (roomCharges > 0) {
+                // Mock additional services (in real system, these would come from actual service usage)
+                services.push(
+                    { description: 'Tax & Service Charges', quantity: 1, rate: Math.round(roomCharges * 0.1), amount: Math.round(roomCharges * 0.1) }
+                );
+            }
+
+            let html = '';
+            let subtotal = 0;
+
+            services.forEach(service => {
+                if (service.amount > 0) {
+                    html += `
+                        <tr>
+                            <td>${service.description}</td>
+                            <td class="text-end">${service.quantity}</td>
+                            <td class="text-end">${service.rate.toLocaleString('en-IN')}</td>
+                            <td class="text-end">${service.amount.toLocaleString('en-IN')}</td>
+                        </tr>
+                    `;
+                    subtotal += service.amount;
+                }
+            });
+
+            if (html === '') {
+                html = '<tr><td colspan="4" class="text-center text-muted">No charges applicable</td></tr>';
+            }
+
+            tableBody.innerHTML = html;
+
+            // Calculate totals
+            const gst = Math.round(subtotal * 0.18);
+            const total = subtotal + gst;
+
+            document.getElementById('subtotal').textContent = subtotal.toLocaleString('en-IN');
+            document.getElementById('gst').textContent = gst.toLocaleString('en-IN');
+            document.getElementById('totalAmount').textContent = total.toLocaleString('en-IN');
+        }
+
+        // Set invoice details with real data
+        function setInvoiceDetails() {
+            const today = new Date();
+            const dueDate = new Date(today);
+            dueDate.setDate(dueDate.getDate() + 7);
+
+            document.getElementById('invoiceNumber').textContent = 'INV' + Date.now();
+            document.getElementById('invoiceDate').textContent = today.toLocaleDateString('en-IN');
+            document.getElementById('dueDate').textContent = dueDate.toLocaleDateString('en-IN');
+
+            // Check if user has made any payments
+            if (currentUserData) {
+                const userPayments = payments.filter(p => p.userId === currentUserData.userId);
+                if (userPayments.length > 0) {
+                    // User has made payments
+                    document.getElementById('paymentStatus').innerHTML = '<span class="badge bg-success">Paid</span>';
+                    document.getElementById('paymentStatus').className = 'badge bg-success';
+                    const lastPayment = userPayments[userPayments.length - 1];
+                    document.getElementById('paymentMode').textContent = lastPayment.paymentMode || 'Not specified';
+                } else {
+                    // No payments found
+                    document.getElementById('paymentStatus').innerHTML = '<span class="badge bg-warning">Pending</span>';
+                    document.getElementById('paymentStatus').className = 'badge bg-warning';
+                    document.getElementById('paymentMode').textContent = 'Not specified';
+                }
+
+                // Set generated by based on current user
+                const currentAdmin = sessionStorage.getItem('userId');
+                document.getElementById('generatedBy').textContent = currentAdmin || 'Admin';
+            }
+        }
+
+        // Generate invoice
+        function generateInvoice() {
+            if (!currentUserData) {
+                showErrorAlert('Please search for a user first');
+                return;
+            }
+
+            showSuccess('Invoice generated successfully and sent to guest email');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('userIdForm').reset();
+            document.getElementById('invoiceSection').style.display = 'none';
+            currentUserData = null;
+        }
+
+        // Load recent invoices (mock data)
+        document.addEventListener('DOMContentLoaded', function () {
+            loadRecentInvoices();
+        });
+
+        function loadRecentInvoices() {
+            const tableBody = document.getElementById('recentInvoicesTable');
+            const noInvoices = document.getElementById('noInvoices');
+
+            // Mock recent invoices data
+            const recentInvoices = [
+                { invoiceNo: 'INV20240322001', guestName: 'John Doe', userId: 'USR001', amount: 8500, date: '2024-03-22', status: 'paid' },
+                { invoiceNo: 'INV20240322002', guestName: 'Jane Smith', userId: 'USR002', amount: 12000, date: '2024-03-22', status: 'pending' },
+                { invoiceNo: 'INV20240321001', guestName: 'Bob Johnson', userId: 'USR003', amount: 6500, date: '2024-03-21', status: 'paid' },
+                { invoiceNo: 'INV20240321002', guestName: 'Alice Brown', userId: 'USR004', amount: 9500, date: '2024-03-21', status: 'pending' }
+            ];
+
+            if (recentInvoices.length === 0) {
+                tableBody.innerHTML = '';
+                noInvoices.style.display = 'block';
+                return;
+            }
+
+            noInvoices.style.display = 'none';
+
+            let html = '';
+            recentInvoices.forEach(invoice => {
+                const statusBadge = invoice.status === 'paid' ?
+                    '<span class="badge bg-success">Paid</span>' :
+                    '<span class="badge bg-warning">Pending</span>';
+
+                html += `
+                    <tr>
+                        <td>${invoice.invoiceNo}</td>
+                        <td>${invoice.guestName}</td>
+                        <td>${invoice.userId}</td>
+                        <td>₹${invoice.amount.toLocaleString('en-IN')}</td>
+                        <td>${formatDate(invoice.date)}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewInvoice('${invoice.invoiceNo}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-primary" onclick="printInvoice('${invoice.invoiceNo}')">
+                                <i class="fas fa-print"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableBody.innerHTML = html;
+        }
+
+        // View invoice
+        function viewInvoice(invoiceNo) {
+            showSuccess(`Viewing invoice ${invoiceNo}`);
+        }
+
+        // Print invoice
+        function printInvoice(invoiceNo) {
+            showSuccess(`Printing invoice ${invoiceNo}`);
+        }
+
+        // Helper functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-IN');
+        }
+
+        function getRoomTypeDisplay(roomType) {
+            const types = {
+                'standard': 'Standard Room',
+                'deluxe': 'Deluxe Room',
+                'suite': 'Suite',
+                'presidential': 'Presidential Suite'
+            };
+            return types[roomType] || roomType;
+        }
+    </script>
+</body>
+
+</html>

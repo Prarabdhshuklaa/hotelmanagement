@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System - Admin Reservations</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="admin-dashboard.html">
+                <div>Admin</div>
+                <div><i class="fas fa-hotel"></i> Grand Hotel</div>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-dashboard.html">
+                            <i class="fas fa-home"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="admin-reservation.html">
+                            <i class="fas fa-calendar-check"></i> Reservations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-billing.html">
+                            <i class="fas fa-file-invoice-dollar"></i> Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-history.html">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="room-status.html">
+                            <i class="fas fa-door-open"></i> Rooms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-feedback.html">
+                            <i class="fas fa-headset"></i> Support
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    <span class="welcome-user me-3">Welcome Admin</span>
+                    <button class="btn btn-outline-light btn-sm logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container dashboard-container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4><i class="fas fa-calendar-check"></i> Manage Reservations</h4>
+                        <div>
+                            <button class="btn btn-sm btn-success" onclick="refreshReservations()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filter Options -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="statusFilter" class="form-label">Filter by Status</label>
+                                <select class="form-select" id="statusFilter" onchange="filterReservations()">
+                                    <option value="all">All Reservations</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="rejected">Rejected</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="dateFilter" class="form-label">Filter by Date</label>
+                                <input type="date" class="form-control" id="dateFilter" onchange="filterReservations()">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="searchFilter" class="form-label">Search by Booking ID</label>
+                                <input type="text" class="form-control" id="searchFilter" placeholder="Enter Booking ID"
+                                    onkeyup="filterReservations()">
+                            </div>
+                        </div>
+
+                        <!-- Reservations Table -->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Booking ID</th>
+                                        <th>Guest Name</th>
+                                        <th>Contact</th>
+                                        <th>Check-in</th>
+                                        <th>Check-out</th>
+                                        <th>Room Type</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reservationsTable">
+                                    <!-- Reservations will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- No Reservations Message -->
+                        <div id="noReservations" class="text-center py-4" style="display: none;">
+                            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No reservations found</h5>
+                            <p class="text-muted">There are no reservations matching the current filters.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-hourglass-half text-warning fa-2x"></i>
+                                <h5 class="card-title">Pending</h5>
+                                <h3 class="text-warning" id="pendingCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-check-circle text-success fa-2x"></i>
+                                <h5 class="card-title">Approved</h5>
+                                <h3 class="text-success" id="approvedCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-times-circle text-danger fa-2x"></i>
+                                <h5 class="card-title">Rejected</h5>
+                                <h3 class="text-danger" id="rejectedCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-list text-primary fa-2x"></i>
+                                <h5 class="card-title">Total</h5>
+                                <h3 class="text-primary" id="totalCount">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reservation Details Modal -->
+    <div class="modal fade" id="reservationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reservation Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="reservationDetails">
+                    <!-- Details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Grand Hotel Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        // Load reservations on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            loadAdminReservations();
+            updateStatistics();
+        });
+
+        // Filter reservations
+        function filterReservations() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+            let filteredReservations = reservations;
+
+            if (statusFilter !== 'all') {
+                filteredReservations = filteredReservations.filter(r => r.status === statusFilter);
+            }
+
+            if (dateFilter) {
+                filteredReservations = filteredReservations.filter(r => r.checkIn === dateFilter);
+            }
+
+            if (searchFilter) {
+                filteredReservations = filteredReservations.filter(r =>
+                    r.bookingId.toLowerCase().includes(searchFilter)
+                );
+            }
+
+            displayReservations(filteredReservations);
+        }
+
+        // Display reservations in table
+        function displayReservations(reservationList) {
+            const tableBody = document.getElementById('reservationsTable');
+            const noReservations = document.getElementById('noReservations');
+
+            if (reservationList.length === 0) {
+                tableBody.innerHTML = '';
+                noReservations.style.display = 'block';
+                return;
+            }
+
+            noReservations.style.display = 'none';
+
+            let html = '';
+            reservationList.forEach(reservation => {
+                const statusBadge = getStatusBadge(reservation.status);
+                html += `
+                    <tr>
+                        <td><strong>${reservation.bookingId}</strong></td>
+                        <td>${reservation.name}</td>
+                        <td>${reservation.contact}</td>
+                        <td>${formatDate(reservation.checkIn)}</td>
+                        <td>${formatDate(reservation.checkOut)}</td>
+                        <td>${getRoomTypeDisplay(reservation.roomType)}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-info" onclick="viewReservationDetails('${reservation.bookingId}')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <select class="form-select form-select-sm" style="width: auto;" onchange="updateReservationStatus('${reservation.bookingId}', this.value)">
+                                    <option value="pending" ${reservation.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="approved" ${reservation.status === 'approved' ? 'selected' : ''}>Approve</option>
+                                    <option value="rejected" ${reservation.status === 'rejected' ? 'selected' : ''}>Reject</option>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableBody.innerHTML = html;
+        }
+
+        // Get status badge HTML
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'pending':
+                    return '<span class="badge bg-warning">Pending</span>';
+                case 'approved':
+                    return '<span class="badge bg-success">Approved</span>';
+                case 'rejected':
+                    return '<span class="badge bg-danger">Rejected</span>';
+                default:
+                    return '<span class="badge bg-secondary">Unknown</span>';
+            }
+        }
+
+        // Get room type display
+        function getRoomTypeDisplay(roomType) {
+            const types = {
+                'standard': 'Standard Room',
+                'deluxe': 'Deluxe Room',
+                'suite': 'Suite',
+                'presidential': 'Presidential Suite'
+            };
+            return types[roomType] || roomType;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // View reservation details
+        function viewReservationDetails(bookingId) {
+            const reservation = reservations.find(r => r.bookingId === bookingId);
+            if (!reservation) return;
+
+            const detailsHtml = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Reservation Information</h6>
+                        <p><strong>Booking ID:</strong> ${reservation.bookingId}</p>
+                        <p><strong>Status:</strong> ${getStatusBadge(reservation.status)}</p>
+                        <p><strong>Check-in:</strong> ${formatDate(reservation.checkIn)}</p>
+                        <p><strong>Check-out:</strong> ${formatDate(reservation.checkOut)}</p>
+                        <p><strong>Room Type:</strong> ${getRoomTypeDisplay(reservation.roomType)}</p>
+                        <p><strong>Created:</strong> ${formatDate(reservation.createdAt)}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Guest Information</h6>
+                        <p><strong>Name:</strong> ${reservation.name}</p>
+                        <p><strong>Contact:</strong> ${reservation.contact}</p>
+                        <p><strong>Customer ID:</strong> ${reservation.customerId || 'N/A'}</p>
+                        <p><strong>User ID:</strong> ${reservation.userId || 'N/A'}</p>
+                    </div>
+                </div>
+                ${reservation.specialRequests ? `
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Special Requests</h6>
+                            <p>${reservation.specialRequests}</p>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('reservationDetails').innerHTML = detailsHtml;
+
+            const modal = new bootstrap.Modal(document.getElementById('reservationModal'));
+            modal.show();
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const pending = reservations.filter(r => r.status === 'pending').length;
+            const approved = reservations.filter(r => r.status === 'approved').length;
+            const rejected = reservations.filter(r => r.status === 'rejected').length;
+            const total = reservations.length;
+
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('approvedCount').textContent = approved;
+            document.getElementById('rejectedCount').textContent = rejected;
+            document.getElementById('totalCount').textContent = total;
+        }
+
+        // Refresh reservations
+        function refreshReservations() {
+            loadAdminReservations();
+            updateStatistics();
+            showSuccess('Reservations refreshed successfully');
+        }
+
+        // Override the original loadAdminReservations function
+        function loadAdminReservations() {
+            displayReservations(reservations);
+        }
+    </script>
+</body>
+
+</html>

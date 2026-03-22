@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System - Payment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-hotel"></i> Grand Hotel
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reservation.html">
+                            <i class="fas fa-calendar-plus"></i> Reservation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="billing.html">
+                            <i class="fas fa-file-invoice"></i> Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="support.html">
+                            <i class="fas fa-headset"></i> Customer Support
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    <span class="welcome-user me-3">Welcome Guest</span>
+                    <button class="btn btn-outline-light btn-sm logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container dashboard-container">
+        <div class="row">
+            <div class="col-lg-6 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-credit-card"></i> Payment</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Bill Summary -->
+                        <div class="billing-summary mb-4">
+                            <h5>Bill Summary</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Booking ID:</strong> <span id="bookingId">BK20240320001</span></p>
+                                    <p><strong>Guest Name:</strong> <span id="guestName">John Doe</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Room Number:</strong> <span id="roomNumber">101</span></p>
+                                    <p><strong>Check-out:</strong> <span id="checkOutDate">2024-03-22</span></p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="text-center">
+                                <p class="mb-1">Total Amount Due</p>
+                                <h2 class="bill-amount" id="billAmount">10,148</h2>
+                            </div>
+                        </div>
+
+                        <!-- Payment Mode Selection -->
+                        <form id="paymentForm">
+                            <div class="mb-4">
+                                <h6>Select Payment Mode</h6>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMode" id="debitCard"
+                                        value="debit" checked>
+                                    <label class="form-check-label" for="debitCard">
+                                        <i class="fas fa-credit-card"></i> Debit Card
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentMode" id="creditCard"
+                                        value="credit">
+                                    <label class="form-check-label" for="creditCard">
+                                        <i class="fas fa-credit-card"></i> Credit Card
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-lock"></i> Pay Now
+                                </button>
+                                <a href="billing.html" class="btn btn-secondary mt-2">
+                                    <i class="fas fa-arrow-left"></i> Back to Billing
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security Information -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h6><i class="fas fa-shield-alt"></i> Secure Payment</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><i class="fas fa-check text-success"></i> 256-bit SSL encryption</li>
+                            <li><i class="fas fa-check text-success"></i> PCI DSS compliant</li>
+                            <li><i class="fas fa-check text-success"></i> No card details stored</li>
+                            <li><i class="fas fa-check text-success"></i> Secure payment gateway</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Details Modal -->
+    <div class="modal fade" id="cardDetailsModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-credit-card"></i> Enter Card Details
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <form id="cardDetailsForm">
+                        <!-- Card Number -->
+                        <div class="mb-3">
+                            <label for="cardNumber" class="form-label">Card Number</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="cardNumber"
+                                    placeholder="1234 5678 9012 3456" maxlength="19" required>
+                                <span class="input-group-text">
+                                    <i class="fas fa-credit-card"></i>
+                                </span>
+                            </div>
+                            <div class="invalid-feedback"></div>
+                            <small class="text-muted">16-digit card number</small>
+                        </div>
+
+                        <!-- Card Holder Name -->
+                        <div class="mb-3">
+                            <label for="cardHolderName" class="form-label">Card Holder Name</label>
+                            <input type="text" class="form-control" id="cardHolderName" placeholder="John Doe" required>
+                            <div class="invalid-feedback"></div>
+                            <small class="text-muted">Minimum 10 characters</small>
+                        </div>
+
+                        <!-- Expiry and CVV -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="expiry" class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiry" placeholder="MM/YY"
+                                        maxlength="5" required>
+                                    <div class="invalid-feedback"></div>
+                                    <small class="text-muted">Format: MM/YY</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" placeholder="123" maxlength="3"
+                                        required>
+                                    <div class="invalid-feedback"></div>
+                                    <small class="text-muted">3-digit code</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Save Card Option -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="saveCard">
+                                <label class="form-check-label" for="saveCard">
+                                    Save card details for future payments
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Processing Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-lock"></i> Make Payment
+                            </button>
+                            <button type="button" class="btn btn-secondary mt-2" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Modal -->
+    <div class="modal fade" id="processingModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="spinner mb-3"></div>
+                    <h5>Processing Payment</h5>
+                    <p class="text-muted">Please wait while we process your payment...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Grand Hotel Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        let cardDetailsModal;
+        let processingModal;
+
+        // Initialize modals
+        document.addEventListener('DOMContentLoaded', function () {
+            cardDetailsModal = new bootstrap.Modal(document.getElementById('cardDetailsModal'));
+            processingModal = new bootstrap.Modal(document.getElementById('processingModal'));
+
+            loadPaymentDetails();
+            initializeCardFormatting();
+        });
+
+        // Load payment details
+        function loadPaymentDetails() {
+            const userId = sessionStorage.getItem('userId');
+
+            // Get user's active reservation
+            const activeReservation = reservations.find(r =>
+                r.userId === userId && r.status === 'approved'
+            );
+
+            if (activeReservation) {
+                document.getElementById('bookingId').textContent = activeReservation.bookingId;
+                document.getElementById('guestName').textContent = activeReservation.name;
+                document.getElementById('checkOutDate').textContent = formatDate(activeReservation.checkOut);
+
+                // Calculate bill amount (mock calculation)
+                const checkIn = new Date(activeReservation.checkIn);
+                const checkOut = new Date(activeReservation.checkOut);
+                const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+
+                const roomRates = {
+                    'standard': 2000,
+                    'deluxe': 3000,
+                    'suite': 5000,
+                    'presidential': 8000
+                };
+
+                const roomRate = roomRates[activeReservation.roomType] || 3000;
+                const roomCharges = nights * roomRate;
+                const additionalCharges = 1500; // Mock additional charges
+                const subtotal = roomCharges + additionalCharges;
+                const gst = Math.round(subtotal * 0.18);
+                const total = subtotal + gst;
+
+                document.getElementById('billAmount').textContent = total.toLocaleString('en-IN');
+                document.getElementById('roomNumber').textContent = Math.floor(Math.random() * 300) + 100;
+            }
+        }
+
+        // Handle payment form submission
+        document.getElementById('paymentForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Show card details modal
+            cardDetailsModal.show();
+        });
+
+        // Handle card details form submission
+        document.getElementById('cardDetailsForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Clear previous errors
+            clearAllErrors();
+
+            // Get form values
+            const cardNumber = document.getElementById('cardNumber').value;
+            const cardHolderName = document.getElementById('cardHolderName').value;
+            const expiry = document.getElementById('expiry').value;
+            const cvv = document.getElementById('cvv').value;
+
+            let isValid = true;
+
+            // Validate card number
+            if (!validateCardNumber(cardNumber)) {
+                showError('cardNumber', 'Card number must be 16 digits');
+                isValid = false;
+            }
+
+            // Validate card holder name
+            if (!validateCardHolderName(cardHolderName)) {
+                showError('cardHolderName', 'Card holder name must be at least 10 characters');
+                isValid = false;
+            }
+
+            // Validate expiry
+            if (!validateExpiry(expiry)) {
+                showError('expiry', 'Expiry date must be in MM/YY format');
+                isValid = false;
+            }
+
+            // Validate CVV
+            if (!validateCVV(cvv)) {
+                showError('cvv', 'CVV must be 3 digits');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            // Show processing modal
+            cardDetailsModal.hide();
+            processingModal.show();
+
+            // Simulate payment processing
+            setTimeout(() => {
+                processingModal.hide();
+                processPayment(cardNumber, cardHolderName, expiry);
+            }, 3000);
+        });
+
+        // Process payment
+        function processPayment(cardNumber, cardHolderName, expiry) {
+            const paymentMode = document.querySelector('input[name="paymentMode"]:checked').value;
+            const amount = document.getElementById('billAmount').textContent;
+
+            // Create payment record
+            const payment = {
+                transactionId: generateTransactionId(),
+                userId: sessionStorage.getItem('userId'),
+                amount: amount,
+                paymentMode: paymentMode,
+                cardNumber: '****-****-****-' + cardNumber.slice(-4),
+                cardHolderName: cardHolderName,
+                expiry: expiry,
+                createdAt: new Date().toISOString()
+            };
+
+            payments.push(payment);
+            saveDataToStorage();
+
+            // Show payment success
+            showPaymentSuccess(payment);
+
+            // Show checkout notification after delay
+            setTimeout(() => {
+                showNotification();
+            }, 2000);
+        }
+
+        // Initialize card formatting
+        function initializeCardFormatting() {
+            // Format card number
+            document.getElementById('cardNumber').addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\s/g, '');
+                let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                e.target.value = formattedValue;
+            });
+
+            // Format expiry date
+            document.getElementById('expiry').addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                }
+                e.target.value = value;
+            });
+
+            // Only allow numbers for CVV
+            document.getElementById('cvv').addEventListener('input', function (e) {
+                e.target.value = e.target.value.replace(/\D/g, '');
+            });
+        }
+
+        // Format date helper
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+    </script>
+</body>
+
+</html>

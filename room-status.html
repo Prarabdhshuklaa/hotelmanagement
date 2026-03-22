@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System - Room Status</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="admin-dashboard.html">
+                <i class="fas fa-hotel"></i> Grand Hotel Admin
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-dashboard.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-reservation.html">
+                            <i class="fas fa-calendar-check"></i> Reservation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-billing.html">
+                            <i class="fas fa-file-invoice-dollar"></i> Billing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-history.html">
+                            <i class="fas fa-history"></i> History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="room-status.html">
+                            <i class="fas fa-door-open"></i> Room Status
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin-bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="support.html">
+                            <i class="fas fa-headset"></i> Customer Support
+                        </a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    <span class="welcome-user me-3">Welcome Admin</span>
+                    <button class="btn btn-outline-light btn-sm logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container dashboard-container">
+        <div class="row">
+            <div class="col-12">
+                <!-- Customer ID Input -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4><i class="fas fa-door-open"></i> Room Status</h4>
+                            <div>
+                                <button type="button" class="btn btn-info btn-sm" onclick="refreshRoomStatus()">
+                                    <i class="fas fa-sync"></i> Refresh
+                                </button>
+                                <span class="badge bg-success ms-2">Live</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form id="customerIdForm">
+                            <div class="row align-items-end">
+                                <div class="col-md-4">
+                                    <label for="customerIdInput" class="form-label">Customer ID</label>
+                                    <input type="text" class="form-control" id="customerIdInput"
+                                        placeholder="Enter Customer ID (e.g., CUST12345, USR001)" maxlength="20"
+                                        required>
+                                    <div class="invalid-feedback"></div>
+                                    <small class="text-muted">Enter Customer ID or User ID (letters and numbers
+                                        allowed)</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i> Check Status
+                                    </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-secondary w-100" onclick="clearForm()">
+                                        <i class="fas fa-times"></i> Clear
+                                    </button>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-info w-100" onclick="showAllRooms()">
+                                        <i class="fas fa-list"></i> Show All
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Room Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-door-open text-success fa-2x"></i>
+                                <h6 class="card-title">Vacant Rooms</h6>
+                                <h4 class="text-success" id="vacantRooms">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-door-closed text-danger fa-2x"></i>
+                                <h6 class="card-title">Booked Rooms</h6>
+                                <h4 class="text-danger" id="bookedRooms">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-broom text-warning fa-2x"></i>
+                                <h6 class="card-title">Cleaning</h6>
+                                <h4 class="text-warning" id="cleaningRooms">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <i class="fas fa-tools text-info fa-2x"></i>
+                                <h6 class="card-title">Maintenance</h6>
+                                <h4 class="text-info" id="maintenanceRooms">0</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Room Status Table -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-th"></i> Room Availability</h5>
+                        <div>
+                            <button class="btn btn-sm btn-success" onclick="window.print()">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="btn btn-sm btn-primary ms-2" onclick="exportRoomStatus()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filter Options -->
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="floorFilter" class="form-label">Filter by Floor</label>
+                                <select class="form-select" id="floorFilter" onchange="filterRooms()">
+                                    <option value="all">All Floors</option>
+                                    <option value="1">Floor 1</option>
+                                    <option value="2">Floor 2</option>
+                                    <option value="3">Floor 3</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="statusFilter" class="form-label">Filter by Status</label>
+                                <select class="form-select" id="statusFilter" onchange="filterRooms()">
+                                    <option value="all">All Status</option>
+                                    <option value="vacant">Vacant</option>
+                                    <option value="booked">Booked</option>
+                                    <option value="cleaning">Cleaning</option>
+                                    <option value="maintenance">Maintenance</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="roomTypeFilter" class="form-label">Filter by Room Type</label>
+                                <select class="form-select" id="roomTypeFilter" onchange="filterRooms()">
+                                    <option value="all">All Types</option>
+                                    <option value="standard">Standard Room</option>
+                                    <option value="deluxe">Deluxe Room</option>
+                                    <option value="suite">Suite</option>
+                                    <option value="presidential">Presidential Suite</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="searchRoom" class="form-label">Search Room</label>
+                                <input type="text" class="form-control" id="searchRoom" placeholder="Enter Room Number"
+                                    onkeyup="filterRooms()">
+                            </div>
+                        </div>
+
+                        <!-- Room Table -->
+                        <div class="table-responsive room-table">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Room Number</th>
+                                        <th>Floor</th>
+                                        <th>Room Type</th>
+                                        <th>Status</th>
+                                        <th>Price (₹/night)</th>
+                                        <th>Guest Name</th>
+                                        <th>Check-in</th>
+                                        <th>Check-out</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="roomTable">
+                                    <!-- Room data will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- No Rooms Message -->
+                        <div id="noRooms" class="text-center py-5" style="display: none;">
+                            <i class="fas fa-door-closed fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Rooms Found</h5>
+                            <p class="text-muted">No rooms found matching the current criteria.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Room Details Modal -->
+    <div class="modal fade" id="roomDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Room Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="roomDetails">
+                    <!-- Room details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Room Status Modal -->
+    <div class="modal fade" id="updateRoomModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Room Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateRoomForm">
+                        <div class="mb-3">
+                            <label for="updateRoomNumber" class="form-label">Room Number</label>
+                            <input type="text" class="form-control" id="updateRoomNumber" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="updateStatus" class="form-label">New Status</label>
+                            <select class="form-select" id="updateStatus" required>
+                                <option value="">Select Status</option>
+                                <option value="vacant">Vacant</option>
+                                <option value="booked">Booked</option>
+                                <option value="cleaning">Cleaning</option>
+                                <option value="maintenance">Maintenance</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="updateNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="updateNotes" rows="3"
+                                placeholder="Add any notes..."></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Update Status</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Grand Hotel Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        let allRooms = [];
+        let currentCustomerId = null;
+
+        // Generate room data with live data from reservations
+        function generateRoomData() {
+            const roomTypes = [
+                { type: 'standard', price: 2000, rooms: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110] },
+                { type: 'deluxe', price: 3000, rooms: [201, 202, 203, 204, 205, 206, 207, 208, 209, 210] },
+                { type: 'suite', price: 5000, rooms: [301, 302, 303, 304, 305, 306, 307, 308, 309, 310] },
+                { type: 'presidential', price: 8000, rooms: [401, 402] }
+            ];
+
+            const rooms = [];
+            const today = new Date();
+
+            roomTypes.forEach(roomType => {
+                roomType.rooms.forEach(roomNumber => {
+                    let status = 'vacant';
+                    let guestName = '';
+                    let checkIn = '';
+                    let checkOut = '';
+
+                    // Check if this room is assigned to any approved reservation
+                    const assignedReservation = reservations.find(r =>
+                        r.roomNumber === roomNumber &&
+                        r.status === 'approved'
+                    );
+
+                    if (assignedReservation) {
+                        const reservationCheckIn = new Date(assignedReservation.checkIn);
+                        const reservationCheckOut = new Date(assignedReservation.checkOut);
+
+                        if (today < reservationCheckIn) {
+                            // Future reservation - room is booked
+                            status = 'booked';
+                            guestName = assignedReservation.name;
+                            checkIn = assignedReservation.checkIn;
+                            checkOut = assignedReservation.checkOut;
+                        } else if (today >= reservationCheckIn && today <= reservationCheckOut) {
+                            // Current reservation - room is occupied
+                            status = 'booked';
+                            guestName = assignedReservation.name;
+                            checkIn = assignedReservation.checkIn;
+                            checkOut = assignedReservation.checkOut;
+                        } else if (today > reservationCheckOut) {
+                            // Past reservation - room needs cleaning
+                            status = 'cleaning';
+                            guestName = assignedReservation.name;
+                            checkIn = assignedReservation.checkIn;
+                            checkOut = assignedReservation.checkOut;
+                        }
+                    }
+
+                    // Determine floor from room number
+                    const floor = Math.floor(roomNumber / 100);
+
+                    rooms.push({
+                        roomNumber: roomNumber,
+                        floor: floor,
+                        roomType: roomType.type,
+                        status: status,
+                        price: roomType.price,
+                        guestName: guestName,
+                        checkIn: checkIn,
+                        checkOut: checkOut
+                    });
+                });
+            });
+
+            // Sort rooms by room number
+            rooms.sort((a, b) => a.roomNumber - b.roomNumber);
+            return rooms;
+        }
+
+        // Load room status on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            loadRoomStatus();
+            // Auto-refresh room status every 30 seconds
+            setInterval(loadRoomStatus, 30000);
+        });
+
+        // Load room status
+        function loadRoomStatus() {
+            allRooms = generateRoomData();
+            displayRooms(allRooms);
+            updateStatistics();
+        }
+
+        // Refresh room status manually
+        function refreshRoomStatus() {
+            loadRoomStatus();
+            showSuccess('Room status refreshed successfully');
+        }
+
+        // Generate guest name
+        function generateGuestName() {
+            const names = ['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Brown', 'Charlie Wilson'];
+            return names[Math.floor(Math.random() * names.length)];
+        }
+
+        // Generate random date
+        function generateRandomDate() {
+            const start = new Date();
+            const end = new Date();
+            end.setDate(end.getDate() + 30);
+            const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            return randomDate.toISOString().split('T')[0];
+        }
+
+        // Handle Customer ID form submission
+        document.getElementById('customerIdForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const customerIdInput = document.getElementById('customerIdInput').value.trim();
+
+            if (!customerIdInput) {
+                showErrorAlert('Please enter a Customer ID');
+                return;
+            }
+
+            if (!/^\d{13}$/.test(customerIdInput)) {
+                showErrorAlert('Customer ID must be exactly 13 digits');
+                return;
+            }
+
+            currentCustomerId = customerIdInput;
+            showSuccess(`Checking room status for Customer ID: ${customerIdInput}`);
+
+            // Filter rooms for this customer (mock logic)
+            const customerRooms = allRooms.filter(room =>
+                room.status === 'booked' && Math.random() < 0.3 // 30% chance room belongs to this customer
+            );
+
+            displayRooms(customerRooms.length > 0 ? customerRooms : allRooms);
+            updateStatistics();
+        });
+
+        // Show all rooms
+        function showAllRooms() {
+            currentCustomerId = null;
+            document.getElementById('customerIdInput').value = '';
+            displayRooms(allRooms);
+            updateStatistics();
+        }
+
+        // Display rooms in table
+        function displayRooms(rooms) {
+            const roomTable = document.getElementById('roomTable');
+            const noRooms = document.getElementById('noRooms');
+
+            if (rooms.length === 0) {
+                roomTable.innerHTML = '';
+                noRooms.style.display = 'block';
+                return;
+            }
+
+            noRooms.style.display = 'none';
+
+            let html = '';
+            rooms.forEach(room => {
+                const statusBadge = getStatusBadge(room.status);
+                html += `
+                    <tr>
+                        <td><strong>${room.roomNumber}</strong></td>
+                        <td>${room.floor}</td>
+                        <td>${getRoomTypeDisplay(room.roomType)}</td>
+                        <td>${statusBadge}</td>
+                        <td>₹${room.price.toLocaleString('en-IN')}</td>
+                        <td>${room.guestName || '-'}</td>
+                        <td>${room.checkIn ? formatDate(room.checkIn) : '-'}</td>
+                        <td>${room.checkOut ? formatDate(room.checkOut) : '-'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewRoomDetails(${room.roomNumber})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-warning ms-1" onclick="updateRoomStatus(${room.roomNumber}, '${room.status}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            roomTable.innerHTML = html;
+        }
+
+        // Filter rooms
+        function filterRooms() {
+            const floorFilter = document.getElementById('floorFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const roomTypeFilter = document.getElementById('roomTypeFilter').value;
+            const searchRoom = document.getElementById('searchRoom').value.toLowerCase();
+
+            let filteredRooms = allRooms;
+
+            if (floorFilter !== 'all') {
+                filteredRooms = filteredRooms.filter(r => r.floor == floorFilter);
+            }
+
+            if (statusFilter !== 'all') {
+                filteredRooms = filteredRooms.filter(r => r.status === statusFilter);
+            }
+
+            if (roomTypeFilter !== 'all') {
+                filteredRooms = filteredRooms.filter(r => r.roomType === roomTypeFilter);
+            }
+
+            if (searchRoom) {
+                filteredRooms = filteredRooms.filter(r =>
+                    r.roomNumber.toString().includes(searchRoom)
+                );
+            }
+
+            displayRooms(filteredRooms);
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const vacant = allRooms.filter(r => r.status === 'vacant').length;
+            const booked = allRooms.filter(r => r.status === 'booked').length;
+            const cleaning = allRooms.filter(r => r.status === 'cleaning').length;
+            const maintenance = allRooms.filter(r => r.status === 'maintenance').length;
+
+            document.getElementById('vacantRooms').textContent = vacant;
+            document.getElementById('bookedRooms').textContent = booked;
+            document.getElementById('cleaningRooms').textContent = cleaning;
+            document.getElementById('maintenanceRooms').textContent = maintenance;
+        }
+
+        // View room details
+        function viewRoomDetails(roomNumber) {
+            const room = allRooms.find(r => r.roomNumber === roomNumber);
+            if (!room) return;
+
+            const detailsHtml = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Room Information</h6>
+                        <p><strong>Room Number:</strong> ${room.roomNumber}</p>
+                        <p><strong>Floor:</strong> ${room.floor}</p>
+                        <p><strong>Room Type:</strong> ${getRoomTypeDisplay(room.roomType)}</p>
+                        <p><strong>Status:</strong> ${getStatusBadge(room.status)}</p>
+                        <p><strong>Price per Night:</strong> ₹${room.price.toLocaleString('en-IN')}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Occupancy Information</h6>
+                        <p><strong>Guest Name:</strong> ${room.guestName || 'Not occupied'}</p>
+                        <p><strong>Check-in:</strong> ${room.checkIn ? formatDate(room.checkIn) : 'N/A'}</p>
+                        <p><strong>Check-out:</strong> ${room.checkOut ? formatDate(room.checkOut) : 'N/A'}</p>
+                        <p><strong>Current Customer ID:</strong> ${currentCustomerId || 'N/A'}</p>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Room Features</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-wifi text-success"></i> Free Wi-Fi</li>
+                                    <li><i class="fas fa-tv text-primary"></i> LED TV with Cable</li>
+                                    <li><i class="fas fa-snowflake text-info"></i> Air Conditioning</li>
+                                    <li><i class="fas fa-phone text-warning"></i> Telephone</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-coffee text-success"></i> Tea/Coffee Maker</li>
+                                    <li><i class="fas fa-snowflake text-info"></i> Mini Bar</li>
+                                    <li><i class="fas fa-safe text-warning"></i> Safe Deposit Box</li>
+                                    <li><i class="fas fa-bath text-primary"></i> Private Bathroom</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('roomDetails').innerHTML = detailsHtml;
+
+            const modal = new bootstrap.Modal(document.getElementById('roomDetailsModal'));
+            modal.show();
+        }
+
+        // Update room status
+        function updateRoomStatus(roomNumber, currentStatus) {
+            document.getElementById('updateRoomNumber').value = roomNumber;
+            document.getElementById('updateStatus').value = currentStatus;
+
+            const modal = new bootstrap.Modal(document.getElementById('updateRoomModal'));
+            modal.show();
+        }
+
+        // Handle update room form
+        document.getElementById('updateRoomForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const roomNumber = parseInt(document.getElementById('updateRoomNumber').value);
+            const newStatus = document.getElementById('updateStatus').value;
+            const notes = document.getElementById('updateNotes').value;
+
+            if (!newStatus) {
+                showErrorAlert('Please select a status');
+                return;
+            }
+
+            // Update room status
+            const room = allRooms.find(r => r.roomNumber === roomNumber);
+            if (room) {
+                room.status = newStatus;
+
+                // Clear guest info if room is no longer booked
+                if (newStatus !== 'booked') {
+                    room.guestName = '';
+                    room.checkIn = '';
+                    room.checkOut = '';
+                }
+
+                displayRooms(allRooms);
+                updateStatistics();
+
+                // Close modal
+                bootstrap.Modal.getInstance(document.getElementById('updateRoomModal')).hide();
+
+                showSuccess(`Room ${roomNumber} status updated to ${newStatus}`);
+
+                // Reset form
+                this.reset();
+            }
+        });
+
+        // Clear form
+        function clearForm() {
+            document.getElementById('customerIdForm').reset();
+            currentCustomerId = null;
+            displayRooms(allRooms);
+            updateStatistics();
+        }
+
+        // Export room status
+        function exportRoomStatus() {
+            showSuccess('Exporting room status...');
+            // In a real application, this would generate and download a CSV/PDF file
+        }
+
+        // Helper functions
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'vacant':
+                    return '<span class="room-vacant">VACANT</span>';
+                case 'booked':
+                    return '<span class="room-booked">BOOKED</span>';
+                case 'cleaning':
+                    return '<span class="badge bg-warning">CLEANING</span>';
+                case 'maintenance':
+                    return '<span class="badge bg-info">MAINTENANCE</span>';
+                default:
+                    return '<span class="badge bg-secondary">UNKNOWN</span>';
+            }
+        }
+
+        function getRoomTypeDisplay(roomType) {
+            const types = {
+                'standard': 'Standard Room',
+                'deluxe': 'Deluxe Room',
+                'suite': 'Suite',
+                'presidential': 'Presidential Suite'
+            };
+            return types[roomType] || roomType;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // Initialize room data on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            allRooms = generateRoomData();
+            displayRooms(allRooms);
+            updateStatistics();
+        });
+    </script>
+</body>
+
+</html>
