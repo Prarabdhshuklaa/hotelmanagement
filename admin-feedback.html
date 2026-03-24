@@ -228,6 +228,12 @@
             document.getElementById('statusFilter').addEventListener('change', filterFeedbacks);
             document.getElementById('priorityFilter').addEventListener('change', filterFeedbacks);
             document.getElementById('typeFilter').addEventListener('change', filterFeedbacks);
+
+            // Auto-refresh feedbacks every 30 seconds
+            setInterval(() => {
+                loadFeedbacks();
+                updateStatistics();
+            }, 30000);
         });
 
         // Load all feedbacks
@@ -258,7 +264,7 @@
             const typeFilter = document.getElementById('typeFilter').value;
 
             filteredFeedbacks = allFeedbacks.filter(feedback => {
-                const statusMatch = !statusFilter || feedback.priority === statusFilter;
+                const statusMatch = !statusFilter || feedback.status === statusFilter;
                 const priorityMatch = !priorityFilter || feedback.priority === priorityFilter;
                 const typeMatch = !typeFilter || feedback.complaintType === typeFilter;
                 return statusMatch && priorityMatch && typeMatch;

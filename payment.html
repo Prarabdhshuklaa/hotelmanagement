@@ -75,18 +75,18 @@
                             <h5>Bill Summary</h5>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <p><strong>Booking ID:</strong> <span id="bookingId">BK20240320001</span></p>
-                                    <p><strong>Guest Name:</strong> <span id="guestName">John Doe</span></p>
+                                    <p><strong>Booking ID:</strong> <span id="bookingId">-</span></p>
+                                    <p><strong>Guest Name:</strong> <span id="guestName">-</span></p>
                                 </div>
                                 <div class="col-md-6">
-                                    <p><strong>Room Number:</strong> <span id="roomNumber">101</span></p>
-                                    <p><strong>Check-out:</strong> <span id="checkOutDate">2024-03-22</span></p>
+                                    <p><strong>Room Number:</strong> <span id="roomNumber">-</span></p>
+                                    <p><strong>Check-out:</strong> <span id="checkOutDate">-</span></p>
                                 </div>
                             </div>
                             <hr>
                             <div class="text-center">
                                 <p class="mb-1">Total Amount Due</p>
-                                <h2 class="bill-amount" id="billAmount">10,148</h2>
+                                <h2 class="bill-amount" id="billAmount">-</h2>
                             </div>
                         </div>
 
@@ -166,7 +166,8 @@
                         <!-- Card Holder Name -->
                         <div class="mb-3">
                             <label for="cardHolderName" class="form-label">Card Holder Name</label>
-                            <input type="text" class="form-control" id="cardHolderName" placeholder="John Doe" required>
+                            <input type="text" class="form-control" id="cardHolderName"
+                                placeholder="Enter card holder name" required>
                             <div class="invalid-feedback"></div>
                             <small class="text-muted">Minimum 10 characters</small>
                         </div>
@@ -249,6 +250,9 @@
             cardDetailsModal = new bootstrap.Modal(document.getElementById('cardDetailsModal'));
             processingModal = new bootstrap.Modal(document.getElementById('processingModal'));
 
+            // Clear all error messages on page load
+            clearAllErrors();
+
             loadPaymentDetails();
             initializeCardFormatting();
         });
@@ -257,9 +261,12 @@
         function loadPaymentDetails() {
             const userId = sessionStorage.getItem('userId');
 
-            // Get user's active reservation
+            // First, update existing reservations to have amount field
+            updateExistingReservations();
+
+            // Get user's active reservation (pending or approved)
             const activeReservation = reservations.find(r =>
-                r.userId === userId && r.status === 'approved'
+                r.userId === userId && (r.status === 'approved' || r.status === 'pending')
             );
 
             if (activeReservation) {
@@ -267,27 +274,78 @@
                 document.getElementById('guestName').textContent = activeReservation.name;
                 document.getElementById('checkOutDate').textContent = formatDate(activeReservation.checkOut);
 
-                // Calculate bill amount (mock calculation)
-                const checkIn = new Date(activeReservation.checkIn);
-                const checkOut = new Date(activeReservation.checkOut);
-                const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                // Use stored amount from reservation, or calculate if not available
+                let total = activeReservation.amount;
+                if (!total || total === 0) {
+                    // Calculate amount if not stored
+                    const checkIn = new Date(activeReservation.checkIn);
+                    const checkOut = new Date(activeReservation.checkOut);
+                    const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
 
-                const roomRates = {
-                    'standard': 2000,
-                    'deluxe': 3000,
-                    'suite': 5000,
-                    'presidential': 8000
-                };
+                    const roomRates = {
+                        'standard': 2000,
+                        'deluxe': 3000,
+                        'suite': 5000,
+                        'presidential': 8000
+                    };
 
-                const roomRate = roomRates[activeReservation.roomType] || 3000;
-                const roomCharges = nights * roomRate;
-                const additionalCharges = 1500; // Mock additional charges
-                const subtotal = roomCharges + additionalCharges;
-                const gst = Math.round(subtotal * 0.18);
-                const total = subtotal + gst;
+                    const roomRate = roomRates[activeReservation.roomType] || 2000;
+                    const roomCharges = nights * roomRate;
+                    const gst = Math.round(roomCharges * 0.18);
+                    total = roomCharges + gst;
+
+                    // Update the reservation with calculated amount
+                    activeReservation.amount = total;
+                    activeReservation.nights = nights;
+                    activeReservation.roomRate = roomRate;
+                    saveDataToStorage();
+                }
 
                 document.getElementById('billAmount').textContent = total.toLocaleString('en-IN');
-                document.getElementById('roomNumber').textContent = Math.floor(Math.random() * 300) + 100;
+                document.getElementById('roomNumber').textContent = activeReservation.roomNumber || 'N/A';
+            } else {
+                // Show no active reservation message
+                document.querySelector('.billing-summary').innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-credit-card fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Active Reservation</h5>
+                        <p class="text-muted">You don't have any active reservations to pay for.</p>
+                        <a href="reservation.html" class="btn btn-primary">Make a Reservation</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Update existing reservations to have amount field
+        function updateExistingReservations() {
+            let updated = false;
+            reservations.forEach(reservation => {
+                if (!reservation.amount || reservation.amount === 0) {
+                    const checkIn = new Date(reservation.checkIn);
+                    const checkOut = new Date(reservation.checkOut);
+                    const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+
+                    const roomRates = {
+                        'standard': 2000,
+                        'deluxe': 3000,
+                        'suite': 5000,
+                        'presidential': 8000
+                    };
+
+                    const roomRate = roomRates[reservation.roomType] || 2000;
+                    const roomCharges = nights * roomRate;
+                    const gst = Math.round(roomCharges * 0.18);
+                    const total = roomCharges + gst;
+
+                    reservation.amount = total;
+                    reservation.nights = nights;
+                    reservation.roomRate = roomRate;
+                    updated = true;
+                }
+            });
+
+            if (updated) {
+                saveDataToStorage();
             }
         }
 
@@ -389,6 +447,11 @@
                 let value = e.target.value.replace(/\s/g, '');
                 let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
                 e.target.value = formattedValue;
+
+                // Clear error when user starts typing
+                if (e.target.value.length > 0) {
+                    clearError('cardNumber');
+                }
             });
 
             // Format expiry date
@@ -398,11 +461,28 @@
                     value = value.slice(0, 2) + '/' + value.slice(2, 4);
                 }
                 e.target.value = value;
+
+                // Clear error when user starts typing
+                if (e.target.value.length > 0) {
+                    clearError('expiry');
+                }
             });
 
             // Only allow numbers for CVV
             document.getElementById('cvv').addEventListener('input', function (e) {
                 e.target.value = e.target.value.replace(/\D/g, '');
+
+                // Clear error when user starts typing
+                if (e.target.value.length > 0) {
+                    clearError('cvv');
+                }
+            });
+
+            // Clear error when user types in card holder name
+            document.getElementById('cardHolderName').addEventListener('input', function (e) {
+                if (e.target.value.length > 0) {
+                    clearError('cardHolderName');
+                }
             });
         }
 

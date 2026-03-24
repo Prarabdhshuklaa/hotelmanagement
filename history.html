@@ -33,6 +33,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="billing.html">
                             <i class="fas fa-file-invoice"></i> Billing
                         </a>
@@ -40,11 +45,6 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="history.html">
                             <i class="fas fa-history"></i> History
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="bookings.html">
-                            <i class="fas fa-book"></i> Bookings
                         </a>
                     </li>
                     <li class="nav-item">
@@ -209,7 +209,6 @@
         const userRole = sessionStorage.getItem('userRole');
 
         if (!currentUser || userRole !== 'customer') {
-            // Redirect to login if not authenticated
             window.location.href = 'index.html';
             return;
         }
@@ -219,119 +218,27 @@
         if (welcomeUser) {
             welcomeUser.textContent = `Welcome ${currentUser}`;
         }
-        let allBookings = [];
 
         // Load booking history on page load
         document.addEventListener('DOMContentLoaded', function () {
             loadBookingHistory();
             updateStatistics();
+
+            // Auto-refresh history every 10 seconds for live updates
+            setInterval(loadBookingHistory, 10000);
         });
 
         // Load booking history
         function loadBookingHistory() {
             const userId = sessionStorage.getItem('userId');
+
+            // Get user's completed reservations
+            const userBookings = reservations.filter(r => r.userId === userId && r.status === 'completed');
+
             const historyTable = document.getElementById('historyTable');
             const noHistory = document.getElementById('noHistory');
 
-            // Get user's reservations
-            const userReservations = reservations.filter(r => r.userId === userId);
-
-            // Create mock booking data from reservations
-            allBookings = userReservations.map(reservation => {
-                const checkIn = new Date(reservation.checkIn);
-                const checkOut = new Date(reservation.checkOut);
-                const today = new Date();
-
-                let status = 'upcoming';
-                if (checkOut < today) {
-                    status = 'completed';
-                } else if (Math.random() < 0.1) { // 10% chance of cancellation for demo
-                    status = 'cancelled';
-                }
-
-                // Calculate amount
-                const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
-                const roomRates = {
-                    'standard': 2000,
-                    'deluxe': 3000,
-                    'suite': 5000,
-                    'presidential': 8000
-                };
-                const roomRate = roomRates[reservation.roomType] || 3000;
-                const amount = nights * roomRate + Math.floor(Math.random() * 2000); // Add random services
-
-                return {
-                    bookingId: reservation.bookingId,
-                    checkIn: reservation.checkIn,
-                    checkOut: reservation.checkOut,
-                    roomNumber: Math.floor(Math.random() * 300) + 100,
-                    roomType: reservation.roomType,
-                    amount: amount,
-                    bookingDate: reservation.createdAt,
-                    status: status,
-                    name: reservation.name,
-                    contact: reservation.contact
-                };
-            });
-
-            // Add some mock historical bookings if user has no reservations
-            if (allBookings.length === 0) {
-                allBookings = generateMockBookings();
-            }
-
-            displayBookings(allBookings);
-        }
-
-        // Generate mock bookings for demo
-        function generateMockBookings() {
-            const mockBookings = [
-                {
-                    bookingId: 'BK20240215001',
-                    checkIn: '2024-02-15',
-                    checkOut: '2024-02-17',
-                    roomNumber: 101,
-                    roomType: 'deluxe',
-                    amount: 6500,
-                    bookingDate: '2024-02-10',
-                    status: 'completed',
-                    name: 'John Doe',
-                    contact: '+91-9876543210'
-                },
-                {
-                    bookingId: 'BK20240120001',
-                    checkIn: '2024-01-20',
-                    checkOut: '2024-01-22',
-                    roomNumber: 205,
-                    roomType: 'suite',
-                    amount: 11000,
-                    bookingDate: '2024-01-15',
-                    status: 'completed',
-                    name: 'John Doe',
-                    contact: '+91-9876543210'
-                },
-                {
-                    bookingId: 'BK20231225001',
-                    checkIn: '2023-12-25',
-                    checkOut: '2023-12-26',
-                    roomNumber: 102,
-                    roomType: 'standard',
-                    amount: 2500,
-                    bookingDate: '2023-12-20',
-                    status: 'completed',
-                    name: 'John Doe',
-                    contact: '+91-9876543210'
-                }
-            ];
-
-            return mockBookings;
-        }
-
-        // Display bookings in table
-        function displayBookings(bookings) {
-            const historyTable = document.getElementById('historyTable');
-            const noHistory = document.getElementById('noHistory');
-
-            if (bookings.length === 0) {
+            if (userBookings.length === 0) {
                 historyTable.innerHTML = '';
                 noHistory.style.display = 'block';
                 return;
@@ -340,27 +247,21 @@
             noHistory.style.display = 'none';
 
             let html = '';
-            bookings.forEach(booking => {
-                const statusBadge = getStatusBadge(booking.status);
+            userBookings.forEach(booking => {
                 html += `
                     <tr>
-                        <td><strong>${booking.bookingId}</strong></td>
+                        <td>${booking.bookingId}</td>
                         <td>${formatDate(booking.checkIn)}</td>
                         <td>${formatDate(booking.checkOut)}</td>
-                        <td>${booking.roomNumber}</td>
+                        <td>${booking.roomNumber || 'N/A'}</td>
                         <td>${getRoomTypeDisplay(booking.roomType)}</td>
                         <td>₹${booking.amount.toLocaleString('en-IN')}</td>
                         <td>${formatDate(booking.bookingDate)}</td>
-                        <td>${statusBadge}</td>
+                        <td><span class="badge bg-success">${booking.status}</span></td>
                         <td>
                             <button class="btn btn-sm btn-info" onclick="viewBookingDetails('${booking.bookingId}')">
                                 <i class="fas fa-eye"></i>
                             </button>
-                            ${booking.status === 'upcoming' ? `
-                                <button class="btn btn-sm btn-warning ms-1" onclick="cancelBooking('${booking.bookingId}')">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            ` : ''}
                         </td>
                     </tr>
                 `;
@@ -369,125 +270,86 @@
             historyTable.innerHTML = html;
         }
 
-        // Filter booking history
+        // Update statistics
+        function updateStatistics() {
+            const userId = sessionStorage.getItem('userId');
+            const userBookings = reservations.filter(r => r.userId === userId && r.status === 'completed');
+
+            const totalBookings = userBookings.length;
+            const totalSpent = userBookings.reduce((sum, b) => sum + (b.amount || 0), 0);
+            const totalNights = userBookings.reduce((sum, b) => {
+                const checkIn = new Date(b.checkIn);
+                const checkOut = new Date(b.checkOut);
+                return sum + Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            }, 0);
+
+            document.getElementById('totalBookings').textContent = totalBookings;
+            document.getElementById('totalSpent').textContent = '₹' + totalSpent.toLocaleString('en-IN');
+            document.getElementById('totalNights').textContent = totalNights;
+        }
+
+        // Filter history
         function filterHistory() {
             const statusFilter = document.getElementById('statusFilter').value;
             const monthFilter = document.getElementById('monthFilter').value;
             const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
 
-            let filteredBookings = allBookings;
+            const userId = sessionStorage.getItem('userId');
+            let userBookings = reservations.filter(r => r.userId === userId && r.status === 'completed');
 
+            // Apply status filter
             if (statusFilter !== 'all') {
-                filteredBookings = filteredBookings.filter(b => b.status === statusFilter);
+                userBookings = userBookings.filter(booking => booking.status === statusFilter);
             }
 
+            // Apply month filter
             if (monthFilter) {
-                filteredBookings = filteredBookings.filter(b => {
-                    const bookingDate = new Date(b.bookingDate);
+                userBookings = userBookings.filter(booking => {
+                    const bookingDate = new Date(booking.checkIn);
                     const [year, month] = monthFilter.split('-');
                     return bookingDate.getFullYear() == year && (bookingDate.getMonth() + 1) == month;
                 });
             }
 
+            // Apply search filter
             if (searchFilter) {
-                filteredBookings = filteredBookings.filter(b =>
-                    b.bookingId.toLowerCase().includes(searchFilter)
+                userBookings = userBookings.filter(booking =>
+                    booking.bookingId.toLowerCase().includes(searchFilter)
                 );
             }
 
-            displayBookings(filteredBookings);
-        }
+            // Display filtered results
+            const historyTable = document.getElementById('historyTable');
+            const noHistory = document.getElementById('noHistory');
 
-        // Update statistics
-        function updateStatistics() {
-            const total = allBookings.length;
-            const completed = allBookings.filter(b => b.status === 'completed').length;
-            const cancelled = allBookings.filter(b => b.status === 'cancelled').length;
-            const totalSpent = allBookings
-                .filter(b => b.status === 'completed')
-                .reduce((sum, b) => sum + b.amount, 0);
-
-            document.getElementById('totalBookings').textContent = total;
-            document.getElementById('completedBookings').textContent = completed;
-            document.getElementById('cancelledBookings').textContent = cancelled;
-            document.getElementById('totalSpent').textContent = '₹' + totalSpent.toLocaleString('en-IN');
-        }
-
-        // View booking details
-        function viewBookingDetails(bookingId) {
-            const booking = allBookings.find(b => b.bookingId === bookingId);
-            if (!booking) return;
-
-            const detailsHtml = `
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Booking Information</h6>
-                        <p><strong>Booking ID:</strong> ${booking.bookingId}</p>
-                        <p><strong>Status:</strong> ${getStatusBadge(booking.status)}</p>
-                        <p><strong>Booking Date:</strong> ${formatDate(booking.bookingDate)}</p>
-                        <p><strong>Check-in:</strong> ${formatDate(booking.checkIn)}</p>
-                        <p><strong>Check-out:</strong> ${formatDate(booking.checkOut)}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Room Information</h6>
-                        <p><strong>Room Number:</strong> ${booking.roomNumber}</p>
-                        <p><strong>Room Type:</strong> ${getRoomTypeDisplay(booking.roomType)}</p>
-                        <p><strong>Guest Name:</strong> ${booking.name}</p>
-                        <p><strong>Contact:</strong> ${booking.contact}</p>
-                        <p><strong>Total Amount:</strong> ₹${booking.amount.toLocaleString('en-IN')}</p>
-                    </div>
-                </div>
-                ${booking.status === 'completed' ? `
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <h6>Payment Information</h6>
-                            <p><strong>Payment Status:</strong> <span class="badge bg-success">Paid</span></p>
-                            <p><strong>Payment Date:</strong> ${formatDate(booking.checkOut)}</p>
-                            <p><strong>Payment Mode:</strong> Credit Card</p>
-                        </div>
-                    </div>
-                ` : ''}
-            `;
-
-            document.getElementById('bookingDetails').innerHTML = detailsHtml;
-
-            const modal = new bootstrap.Modal(document.getElementById('bookingDetailsModal'));
-            modal.show();
-        }
-
-        // Cancel booking
-        function cancelBooking(bookingId) {
-            if (confirm('Are you sure you want to cancel this booking?')) {
-                const booking = allBookings.find(b => b.bookingId === bookingId);
-                if (booking) {
-                    booking.status = 'cancelled';
-                    displayBookings(allBookings);
-                    updateStatistics();
-                    showSuccess(`Booking ${bookingId} has been cancelled`);
-                }
+            if (userBookings.length === 0) {
+                historyTable.innerHTML = '';
+                noHistory.style.display = 'block';
+                return;
             }
-        }
 
-        // Download history
-        function downloadHistory() {
-            showSuccess('Downloading booking history...');
-            // In a real application, this would generate and download a CSV/PDF file
+            noHistory.style.display = 'none';
+
+            let html = '';
+            userBookings.forEach(booking => {
+                html += `
+                    <tr>
+                        <td>${booking.bookingId}</td>
+                        <td>${formatDate(booking.checkIn)}</td>
+                        <td>${formatDate(booking.checkOut)}</td>
+                        <td>${booking.roomNumber || 'N/A'}</td>
+                        <td>${getRoomTypeDisplay(booking.roomType)}</td>
+                        <td>₹${(booking.amount || 0).toLocaleString('en-IN')}</td>
+                        <td>${formatDate(booking.bookingDate || booking.createdAt)}</td>
+                        <td><span class="badge bg-success">${booking.status}</span></td>
+                    </tr>
+                `;
+            });
+
+            historyTable.innerHTML = html;
         }
 
         // Helper functions
-        function getStatusBadge(status) {
-            switch (status) {
-                case 'completed':
-                    return '<span class="badge bg-success">Completed</span>';
-                case 'cancelled':
-                    return '<span class="badge bg-danger">Cancelled</span>';
-                case 'upcoming':
-                    return '<span class="badge bg-primary">Upcoming</span>';
-                default:
-                    return '<span class="badge bg-secondary">Unknown</span>';
-            }
-        }
-
         function getRoomTypeDisplay(roomType) {
             const types = {
                 'standard': 'Standard Room',

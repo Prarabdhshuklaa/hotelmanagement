@@ -459,40 +459,47 @@
             const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
             const guestFilter = document.getElementById('guestFilter').value.toLowerCase();
 
-            let filteredBookings = allBookings;
+            // Generate fresh booking data from reservations
+            let allBookings = generateBookingData();
 
+            // Apply status filter
             if (statusFilter !== 'all') {
-                filteredBookings = filteredBookings.filter(b => b.status === statusFilter);
+                allBookings = allBookings.filter(b => b.status === statusFilter);
             }
 
+            // Apply date filter
             if (dateFilter) {
-                filteredBookings = filteredBookings.filter(b => b.checkIn === dateFilter);
+                allBookings = allBookings.filter(b => b.checkIn === dateFilter);
             }
 
+            // Apply room type filter
             if (roomTypeFilter !== 'all') {
-                filteredBookings = filteredBookings.filter(b => b.roomType === roomTypeFilter);
+                allBookings = allBookings.filter(b => b.roomType === roomTypeFilter);
             }
 
+            // Apply floor filter
             if (floorFilter !== 'all') {
-                filteredBookings = filteredBookings.filter(b => {
+                allBookings = allBookings.filter(b => {
                     const floor = Math.floor(b.roomNumber / 100);
                     return floor == floorFilter;
                 });
             }
 
+            // Apply search filter
             if (searchFilter) {
-                filteredBookings = filteredBookings.filter(b =>
+                allBookings = allBookings.filter(b =>
                     b.bookingId.toLowerCase().includes(searchFilter)
                 );
             }
 
+            // Apply guest filter
             if (guestFilter) {
-                filteredBookings = filteredBookings.filter(b =>
+                allBookings = allBookings.filter(b =>
                     b.guestName.toLowerCase().includes(guestFilter)
                 );
             }
 
-            displayBookings(filteredBookings);
+            displayBookings(allBookings);
         }
 
         // Update statistics

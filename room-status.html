@@ -321,6 +321,7 @@
 
             const rooms = [];
             const today = new Date();
+            today.setHours(0, 0, 0, 0); // Set to start of day for accurate comparison
 
             roomTypes.forEach(roomType => {
                 roomType.rooms.forEach(roomNumber => {
@@ -328,35 +329,45 @@
                     let guestName = '';
                     let checkIn = '';
                     let checkOut = '';
+                    let guestId = '';
+                    let contact = '';
 
-                    // Check if this room is assigned to any approved reservation
+                    // Check if this room is assigned to any active reservation
                     const assignedReservation = reservations.find(r =>
                         r.roomNumber === roomNumber &&
-                        r.status === 'approved'
+                        (r.status === 'approved' || r.status === 'pending')
                     );
 
                     if (assignedReservation) {
                         const reservationCheckIn = new Date(assignedReservation.checkIn);
                         const reservationCheckOut = new Date(assignedReservation.checkOut);
+                        reservationCheckIn.setHours(0, 0, 0, 0);
+                        reservationCheckOut.setHours(0, 0, 0, 0);
 
                         if (today < reservationCheckIn) {
                             // Future reservation - room is booked
                             status = 'booked';
-                            guestName = assignedReservation.name;
+                            guestName = assignedReservation.name || 'Guest';
                             checkIn = assignedReservation.checkIn;
                             checkOut = assignedReservation.checkOut;
+                            guestId = assignedReservation.userId || '';
+                            contact = assignedReservation.contact || '';
                         } else if (today >= reservationCheckIn && today <= reservationCheckOut) {
                             // Current reservation - room is occupied
-                            status = 'booked';
-                            guestName = assignedReservation.name;
+                            status = 'occupied';
+                            guestName = assignedReservation.name || 'Guest';
                             checkIn = assignedReservation.checkIn;
                             checkOut = assignedReservation.checkOut;
+                            guestId = assignedReservation.userId || '';
+                            contact = assignedReservation.contact || '';
                         } else if (today > reservationCheckOut) {
                             // Past reservation - room needs cleaning
                             status = 'cleaning';
-                            guestName = assignedReservation.name;
+                            guestName = assignedReservation.name || 'Guest';
                             checkIn = assignedReservation.checkIn;
                             checkOut = assignedReservation.checkOut;
+                            guestId = assignedReservation.userId || '';
+                            contact = assignedReservation.contact || '';
                         }
                     }
 
@@ -371,7 +382,9 @@
                         price: roomType.price,
                         guestName: guestName,
                         checkIn: checkIn,
-                        checkOut: checkOut
+                        checkOut: checkOut,
+                        guestId: guestId,
+                        contact: contact
                     });
                 });
             });
@@ -399,21 +412,6 @@
         function refreshRoomStatus() {
             loadRoomStatus();
             showSuccess('Room status refreshed successfully');
-        }
-
-        // Generate guest name
-        function generateGuestName() {
-            const names = ['John Doe', 'Jane Smith', 'Bob Johnson', 'Alice Brown', 'Charlie Wilson'];
-            return names[Math.floor(Math.random() * names.length)];
-        }
-
-        // Generate random date
-        function generateRandomDate() {
-            const start = new Date();
-            const end = new Date();
-            end.setDate(end.getDate() + 30);
-            const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-            return randomDate.toISOString().split('T')[0];
         }
 
         // Handle Customer ID form submission

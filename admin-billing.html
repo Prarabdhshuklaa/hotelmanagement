@@ -615,59 +615,10 @@
             currentUserData = null;
         }
 
-        // Load recent invoices (mock data)
+        // Load recent invoices with real data
         document.addEventListener('DOMContentLoaded', function () {
             loadRecentInvoices();
         });
-
-        function loadRecentInvoices() {
-            const tableBody = document.getElementById('recentInvoicesTable');
-            const noInvoices = document.getElementById('noInvoices');
-
-            // Mock recent invoices data
-            const recentInvoices = [
-                { invoiceNo: 'INV20240322001', guestName: 'John Doe', userId: 'USR001', amount: 8500, date: '2024-03-22', status: 'paid' },
-                { invoiceNo: 'INV20240322002', guestName: 'Jane Smith', userId: 'USR002', amount: 12000, date: '2024-03-22', status: 'pending' },
-                { invoiceNo: 'INV20240321001', guestName: 'Bob Johnson', userId: 'USR003', amount: 6500, date: '2024-03-21', status: 'paid' },
-                { invoiceNo: 'INV20240321002', guestName: 'Alice Brown', userId: 'USR004', amount: 9500, date: '2024-03-21', status: 'pending' }
-            ];
-
-            if (recentInvoices.length === 0) {
-                tableBody.innerHTML = '';
-                noInvoices.style.display = 'block';
-                return;
-            }
-
-            noInvoices.style.display = 'none';
-
-            let html = '';
-            recentInvoices.forEach(invoice => {
-                const statusBadge = invoice.status === 'paid' ?
-                    '<span class="badge bg-success">Paid</span>' :
-                    '<span class="badge bg-warning">Pending</span>';
-
-                html += `
-                    <tr>
-                        <td>${invoice.invoiceNo}</td>
-                        <td>${invoice.guestName}</td>
-                        <td>${invoice.userId}</td>
-                        <td>₹${invoice.amount.toLocaleString('en-IN')}</td>
-                        <td>${formatDate(invoice.date)}</td>
-                        <td>${statusBadge}</td>
-                        <td>
-                            <button class="btn btn-sm btn-info" onclick="viewInvoice('${invoice.invoiceNo}')">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn btn-sm btn-primary" onclick="printInvoice('${invoice.invoiceNo}')">
-                                <i class="fas fa-print"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            tableBody.innerHTML = html;
-        }
 
         // View invoice
         function viewInvoice(invoiceNo) {

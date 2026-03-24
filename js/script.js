@@ -8,6 +8,374 @@ let reservations = [];
 let bookings = [];
 let payments = [];
 
+// Generate unique 13-digit Customer ID
+function generateUniqueCustomerId() {
+    let customerId;
+    let isUnique = false;
+    let attempts = 0;
+    const maxAttempts = 100;
+
+    const users = JSON.parse(localStorage.getItem('hotelUsers')) || [];
+
+    while (!isUnique && attempts < maxAttempts) {
+        // Generate 13-digit number with timestamp and random components
+        const timestamp = Date.now().toString().slice(-8); // Last 8 digits of timestamp
+        const random = Math.floor(Math.random() * 100000).toString().padStart(5, '0'); // 5 random digits
+        customerId = timestamp + random; // Total 13 digits
+
+        // Check if this ID already exists
+        isUnique = !users.some(user => user.customerId === customerId);
+
+        attempts++;
+    }
+
+    return customerId;
+}
+
+// Notification System
+function showNotification(message, type = 'success') {
+    // Remove any existing notifications
+    const existingNotification = document.querySelector('.notification-popup');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification-popup alert alert-${type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 300px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: slideInRight 0.3s ease-out;
+    `;
+
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+            <div class="flex-grow-1">${message}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+
+    // Add to page
+    document.body.appendChild(notification);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 5000);
+}
+
+// Success notification
+function showSuccess(message) {
+    showNotification(message, 'success');
+}
+
+// Error notification
+function showError(message) {
+    showNotification(message, 'danger');
+}
+
+// Add animation styles
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// Date validation utility functions
+function initializeDateValidation(dateInputId, minDate = 'today') {
+    const dateInput = document.getElementById(dateInputId);
+    if (!dateInput) return;
+
+    // Set minimum date
+    let minDateValue;
+    if (minDate === 'today') {
+        minDateValue = new Date().toISOString().split('T')[0];
+    } else {
+        minDateValue = minDate;
+    }
+    dateInput.setAttribute('min', minDateValue);
+
+    // Add validation listener
+    dateInput.addEventListener('change', function () {
+        validateDateInput(this);
+    });
+
+    dateInput.addEventListener('blur', function () {
+        validateDateInput(this);
+    });
+}
+
+function validateDateInput(input) {
+    const selectedDate = new Date(input.value);
+    const minDate = new Date(input.getAttribute('min'));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    input.classList.remove('is-invalid', 'is-valid');
+
+    if (!input.value) {
+        input.classList.add('is-invalid');
+        return false;
+    }
+
+    if (selectedDate < minDate) {
+        input.classList.add('is-invalid');
+        const feedback = input.nextElementSibling;
+        if (feedback && feedback.classList.contains('invalid-feedback')) {
+            feedback.textContent = 'Date cannot be in the past';
+        }
+        return false;
+    }
+
+    input.classList.add('is-valid');
+    return true;
+}
+
+function validateDateRange(checkInId, checkOutId) {
+    const checkIn = document.getElementById(checkInId);
+    const checkOut = document.getElementById(checkOutId);
+
+    if (!checkIn || !checkOut) return false;
+
+    const checkInDate = new Date(checkIn.value);
+    const checkOutDate = new Date(checkOut.value);
+
+    // Update check-out minimum when check-in changes
+    checkIn.addEventListener('change', function () {
+        const nextDay = new Date(checkInDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+        const minCheckOut = nextDay.toISOString().split('T')[0];
+        checkOut.setAttribute('min', minCheckOut);
+
+        // Clear check-out if it's before new minimum
+        if (checkOut.value && checkOutDate <= checkInDate) {
+            checkOut.value = '';
+            checkOut.classList.remove('is-valid');
+        }
+    });
+
+    // Validate check-out date
+    checkOut.addEventListener('change', function () {
+        if (checkOutDate <= checkInDate) {
+            checkOut.classList.add('is-invalid');
+            const feedback = checkOut.nextElementSibling;
+            if (feedback && feedback.classList.contains('invalid-feedback')) {
+                feedback.textContent = 'Check-out date must be after check-in date';
+            }
+        } else {
+            checkOut.classList.remove('is-invalid');
+            checkOut.classList.add('is-valid');
+        }
+    });
+
+    return true;
+}
+
+// Global date validation initialization
+function initializeAllDateValidation() {
+    // Initialize all date inputs with today as minimum
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+    dateInputs.forEach(input => {
+        // Skip filter inputs (they should allow past dates)
+        if (input.id.includes('Filter') || input.id.includes('filter')) {
+            return;
+        }
+
+        // Check if it's part of a date range
+        if (input.id.includes('checkIn') || input.id.includes('CheckIn')) {
+            const checkOutId = input.id.replace('checkIn', 'checkOut').replace('CheckIn', 'CheckOut');
+            validateDateRange(input.id, checkOutId);
+        } else if (input.id.includes('checkOut') || input.id.includes('CheckOut')) {
+            const checkInId = input.id.replace('checkOut', 'checkIn').replace('CheckOut', 'CheckIn');
+            validateDateRange(checkInId, input.id);
+        } else {
+            initializeDateValidation(input.id);
+        }
+    });
+}
+
+// Initialize date validation on DOM load
+document.addEventListener('DOMContentLoaded', function () {
+    initializeAllDateValidation();
+    initializeFilterRefresh();
+    initializeFeedbackMonitoring();
+});
+
+// Initialize feedback monitoring for admin
+function initializeFeedbackMonitoring() {
+    // Only monitor if we're on admin pages
+    if (window.location.href.includes('admin-')) {
+        let lastFeedbackCount = JSON.parse(localStorage.getItem('feedbacks') || []).length;
+
+        // Check for new feedback every 10 seconds
+        setInterval(() => {
+            const currentFeedbacks = JSON.parse(localStorage.getItem('feedbacks') || []);
+            if (currentFeedbacks.length > lastFeedbackCount) {
+                // New feedback submitted
+                const newFeedback = currentFeedbacks[currentFeedbacks.length - 1];
+                showNotification(`New feedback received! ID: ${newFeedback.complaintId}`, 'info');
+                lastFeedbackCount = currentFeedbacks.length;
+
+                // Auto-refresh if we're on the feedback page
+                if (typeof loadFeedbacks === 'function') {
+                    loadFeedbacks();
+                    updateStatistics();
+                }
+            }
+        }, 10000);
+    }
+}
+
+// Enhanced notification system with feedback alerts
+function showFeedbackAlert(feedback) {
+    const notification = document.createElement('div');
+    notification.className = 'notification-popup alert alert-info alert-dismissible fade show position-fixed';
+    notification.style.cssText = `
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        min-width: 400px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: slideInRight 0.3s ease-out;
+    `;
+
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fas fa-bell me-3"></i>
+            <div class="flex-grow-1">
+                <strong>New Feedback Received!</strong><br>
+                <small>ID: ${feedback.complaintId} | ${feedback.complaintType} | Priority: ${feedback.priority}</small>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Auto remove after 8 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.3s ease-out';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }
+    }, 8000);
+}
+
+// Initialize filter refresh for live data
+function initializeFilterRefresh() {
+    // Auto-refresh filters every 30 seconds
+    setInterval(() => {
+        refreshAllFilters();
+    }, 30000);
+}
+
+// Refresh all active filters
+function refreshAllFilters() {
+    // Check if we're on a page with filters and refresh them
+    if (typeof filterReservations === 'function' && document.getElementById('statusFilter')) {
+        filterReservations();
+    }
+    if (typeof filterBookings === 'function' && document.getElementById('statusFilter')) {
+        filterBookings();
+    }
+    if (typeof filterHistory === 'function' && document.getElementById('statusFilter')) {
+        filterHistory();
+    }
+}
+
+// Enhanced filter functions with live data
+function enhanceFilterWithLiveData(filterFunction) {
+    return function (...args) {
+        // Ensure we have the latest data before filtering
+        loadDataFromStorage();
+        return filterFunction.apply(this, args);
+    };
+}
+
+// Utility function to get live filtered data
+function getLiveFilteredData(baseArray, filters) {
+    let filteredData = [...baseArray];
+
+    // Apply all filters
+    Object.keys(filters).forEach(key => {
+        const filterValue = filters[key];
+        if (filterValue && filterValue !== 'all') {
+            switch (key) {
+                case 'status':
+                    filteredData = filteredData.filter(item => item.status === filterValue);
+                    break;
+                case 'date':
+                    filteredData = filteredData.filter(item => item.checkIn === filterValue);
+                    break;
+                case 'month':
+                    filteredData = filteredData.filter(item => {
+                        const itemDate = new Date(item.checkIn);
+                        const [year, month] = filterValue.split('-');
+                        return itemDate.getFullYear() == year && (itemDate.getMonth() + 1) == month;
+                    });
+                    break;
+                case 'search':
+                    filteredData = filteredData.filter(item =>
+                        item.bookingId.toLowerCase().includes(filterValue.toLowerCase())
+                    );
+                    break;
+                case 'roomType':
+                    filteredData = filteredData.filter(item => item.roomType === filterValue);
+                    break;
+                case 'floor':
+                    filteredData = filteredData.filter(item => {
+                        const floor = Math.floor(item.roomNumber / 100);
+                        return floor == filterValue;
+                    });
+                    break;
+                case 'guest':
+                    filteredData = filteredData.filter(item =>
+                        item.name.toLowerCase().includes(filterValue.toLowerCase())
+                    );
+                    break;
+            }
+        }
+    });
+
+    return filteredData;
+}
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function () {
     // Load data from localStorage
@@ -126,7 +494,35 @@ function validateMobile(mobile) {
 }
 
 function validateCustomerID(customerId) {
-    return customerId.trim().length >= 5 && customerId.trim().length <= 20;
+    // Accept 13-digit auto-generated Customer IDs
+    return customerId.trim().length === 13 && /^\d{13}$/.test(customerId);
+}
+
+function validateUserIdOrEmail(userIdOrEmail) {
+    const trimmedValue = userIdOrEmail.trim();
+
+    // Check if it's a valid email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailRegex.test(trimmedValue)) {
+        return true;
+    }
+
+    // Check if it's a valid Customer ID (13 digits)
+    if (/^\d{13}$/.test(trimmedValue)) {
+        return true;
+    }
+
+    // Check if it's a valid username (5-50 characters, alphanumeric and spaces)
+    if (trimmedValue.length >= 5 && trimmedValue.length <= 50 && /^[a-zA-Z0-9\s]+$/.test(trimmedValue)) {
+        return true;
+    }
+
+    // Check if it's Admin
+    if (trimmedValue === 'Admin') {
+        return true;
+    }
+
+    return false;
 }
 
 function validatePassword(password) {
@@ -291,6 +687,32 @@ function generateRandomId(length = 8) {
     return result;
 }
 
+// Room allocation system
+let allocatedRooms = {};
+
+// Allocate room number based on room type and availability
+function allocateRoomNumber(roomType) {
+    const roomRanges = {
+        'standard': { min: 100, max: 199 },
+        'deluxe': { min: 200, max: 299 },
+        'suite': { min: 300, max: 399 },
+        'presidential': { min: 400, max: 499 }
+    };
+
+    const range = roomRanges[roomType] || roomRanges['standard'];
+
+    // Find first available room in the range
+    for (let roomNum = range.min; roomNum <= range.max; roomNum++) {
+        if (!allocatedRooms[roomNum]) {
+            allocatedRooms[roomNum] = true;
+            return roomNum;
+        }
+    }
+
+    // If no rooms available, return random in range
+    return Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+}
+
 // Generate booking ID
 function generateBookingId() {
     return 'BK' + Date.now();
@@ -348,14 +770,23 @@ function handleRegistration(event) {
 
     // Validate customer ID
     if (!validateCustomerID(customerId)) {
-        showError('customerId', 'Customer ID must be between 5 and 20 characters');
+        showError('customerId', 'Invalid Customer ID format');
         isValid = false;
     }
 
-    // Check if customer ID already exists
+    // Check if customer ID already exists and regenerate if needed
     if (users && users.find(user => user.customerId === customerId)) {
-        showError('customerId', 'Customer ID already exists');
-        isValid = false;
+        // Customer ID already exists, generate a new one
+        const newCustomerId = generateUniqueCustomerId();
+
+        if (newCustomerId) {
+            // Update the field with the new ID
+            document.getElementById('customerId').value = newCustomerId;
+            isValid = true;
+        } else {
+            showError('customerId', 'Unable to generate unique Customer ID. Please try again.');
+            isValid = false;
+        }
     }
 
     // Validate password
@@ -427,9 +858,9 @@ function handleLogin(event) {
 
     let isValid = true;
 
-    // Validate user ID
-    if (!validateCustomerID(userId)) {
-        showError('userId', 'User ID must be between 5 and 20 characters');
+    // Validate user ID (accept User ID, Username, or Email)
+    if (!validateUserIdOrEmail(userId)) {
+        showError('userId', 'Please enter a valid User ID, Username, or Email');
         isValid = false;
     }
 
@@ -452,6 +883,7 @@ function handleLogin(event) {
         sessionStorage.setItem('currentUser', currentUser);
         sessionStorage.setItem('userRole', currentRole);
         sessionStorage.setItem('userId', 'Admin'); // Add userId for admin
+        sessionStorage.setItem('loggedInUser', 'Admin'); // Add for compatibility
         window.location.href = 'admin-dashboard.html';
         return;
     }
@@ -472,6 +904,7 @@ function handleLogin(event) {
             sessionStorage.setItem('currentUser', currentUser);
             sessionStorage.setItem('userRole', currentRole);
             sessionStorage.setItem('userId', user.userId);
+            sessionStorage.setItem('loggedInUser', user.userId); // Add for compatibility
             sessionStorage.setItem('customerId', user.customerId);
             window.location.href = 'dashboard.html';
             return;
@@ -514,9 +947,31 @@ function handleReservation(event) {
         checkIn: checkIn,
         checkOut: checkOut,
         roomType: roomType,
+        roomNumber: allocateRoomNumber(roomType),
         status: 'pending',
         createdAt: new Date().toISOString()
     };
+
+    // Calculate amount for reservation
+    const checkInDate = new Date(checkIn);
+    const checkOutDate = new Date(checkOut);
+    const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+
+    const roomRates = {
+        'standard': 2000,
+        'deluxe': 3000,
+        'suite': 5000,
+        'presidential': 8000
+    };
+
+    const roomRate = roomRates[roomType] || 2000;
+    const roomCharges = nights * roomRate;
+    const gst = Math.round(roomCharges * 0.18);
+    const totalAmount = roomCharges + gst;
+
+    reservation.amount = totalAmount;
+    reservation.nights = nights;
+    reservation.roomRate = roomRate;
 
     reservations.push(reservation);
     saveDataToStorage();
@@ -526,9 +981,9 @@ function handleReservation(event) {
     // Reset form
     document.getElementById('reservationForm').reset();
 
-    // Show notification after delay
+    // Redirect to billing page after delay
     setTimeout(() => {
-        showNotification();
+        window.location.href = 'billing.html';
     }, 2000);
 }
 

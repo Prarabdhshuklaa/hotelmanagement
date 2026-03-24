@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotel Management System - Reservation</title>
+    <title>Make Reservation | Grand Hotel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
@@ -33,6 +33,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="bookings.html">
+                            <i class="fas fa-book"></i> Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="billing.html">
                             <i class="fas fa-file-invoice"></i> Billing
                         </a>
@@ -40,11 +45,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="history.html">
                             <i class="fas fa-history"></i> History
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="bookings.html">
-                            <i class="fas fa-book"></i> Bookings
                         </a>
                     </li>
                     <li class="nav-item">
@@ -63,64 +63,60 @@
 
     <!-- Main Content -->
     <div class="container dashboard-container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
                 <div class="card">
                     <div class="card-header">
-                        <h4><i class="fas fa-calendar-plus"></i> Make a Reservation</h4>
+                        <h4><i class="fas fa-calendar-plus"></i> Make Reservation</h4>
                     </div>
                     <div class="card-body">
-                        <form id="reservationForm" class="reservation-form">
-                            <!-- Date Selection -->
+                        <form id="reservationForm">
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="checkIn" class="form-label">Check-in Date</label>
                                     <input type="date" class="form-control" id="checkIn" required>
-                                    <div class="invalid-feedback"></div>
+                                    <div class="invalid-feedback">Please select a check-in date</div>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="checkOut" class="form-label">Check-out Date</label>
                                     <input type="date" class="form-control" id="checkOut" required>
-                                    <div class="invalid-feedback"></div>
+                                    <div class="invalid-feedback">Please select a check-out date</div>
                                 </div>
                             </div>
 
-                            <!-- Room Type -->
-                            <div class="mb-3">
-                                <label for="roomType" class="form-label">Room Type</label>
-                                <select class="form-select" id="roomType" required>
-                                    <option value="">Select Room Type</option>
-                                    <option value="standard">Standard Room - ₹2,000/night</option>
-                                    <option value="deluxe">Deluxe Room - ₹3,000/night</option>
-                                    <option value="suite">Suite - ₹5,000/night</option>
-                                    <option value="presidential">Presidential Suite - ₹8,000/night</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="roomType" class="form-label">Room Type</label>
+                                    <select class="form-select" id="roomType" required>
+                                        <option value="">Select Room Type</option>
+                                        <option value="standard">Standard Room - ₹2000/night</option>
+                                        <option value="deluxe">Deluxe Room - ₹3000/night</option>
+                                        <option value="suite">Suite - ₹5000/night</option>
+                                        <option value="presidential">Presidential Suite - ₹8000/night</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select a room type</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label">Guest Name</label>
+                                    <input type="text" class="form-control" id="name" placeholder="Enter your name"
+                                        pattern="[A-Za-z\s]+" required>
+                                    <div class="invalid-feedback">Name should contain only alphabets</div>
+                                </div>
                             </div>
 
-                            <!-- Personal Information -->
-                            <h5 class="mb-3 mt-4">Personal Information</h5>
-
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" placeholder="Enter your full name"
-                                    required>
-                                <div class="invalid-feedback"></div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="contact" class="form-label">Contact Number</label>
-                                <input type="tel" class="form-control" id="contact"
-                                    placeholder="Enter your contact number" pattern="[0-9]{10}" required>
-                                <div class="invalid-feedback"></div>
-                                <small class="text-muted">10-digit mobile number</small>
-                            </div>
-
-                            <!-- Special Requests -->
-                            <div class="mb-3">
-                                <label for="specialRequests" class="form-label">Special Requests (Optional)</label>
-                                <textarea class="form-control" id="specialRequests" rows="3"
-                                    placeholder="Any special requirements or requests..."></textarea>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="contact" class="form-label">Contact Number</label>
+                                    <input type="tel" class="form-control" id="contact"
+                                        placeholder="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]{10}"
+                                        required>
+                                    <div class="invalid-feedback">Please enter a valid 10-digit mobile number</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="specialRequests" class="form-label">Special Requests (Optional)</label>
+                                    <textarea class="form-control" id="specialRequests" rows="1"
+                                        placeholder="Any special requests"></textarea>
+                                </div>
                             </div>
 
                             <!-- Terms and Conditions -->
@@ -128,14 +124,14 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="terms" required>
                                     <label class="form-check-label" for="terms">
-                                        I agree to the <a href="#" data-bs-toggle="modal"
-                                            data-bs-target="#termsModal">terms and conditions</a>
+                                        I agree to the terms and conditions
                                     </label>
                                 </div>
+                                <div class="invalid-feedback">You must agree to the terms and conditions</div>
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary" id="submitBtn">
                                     <i class="fas fa-check"></i> Make Reservation
                                 </button>
                                 <button type="reset" class="btn btn-secondary">
@@ -144,100 +140,6 @@
                             </div>
                         </form>
                     </div>
-                </div>
-
-                <!-- Room Information Card -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h5><i class="fas fa-info-circle"></i> Room Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Standard Room</h6>
-                                <ul>
-                                    <li>1 Queen Bed</li>
-                                    <li>Free Wi-Fi</li>
-                                    <li>Air Conditioning</li>
-                                    <li>TV with Cable</li>
-                                    <li>₹2,000 per night</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>Deluxe Room</h6>
-                                <ul>
-                                    <li>1 King Bed</li>
-                                    <li>Free Wi-Fi</li>
-                                    <li>Air Conditioning</li>
-                                    <li>Mini Bar</li>
-                                    <li>₹3,000 per night</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-6">
-                                <h6>Suite</h6>
-                                <ul>
-                                    <li>1 King Bed + Living Area</li>
-                                    <li>Free Wi-Fi</li>
-                                    <li>Air Conditioning</li>
-                                    <li>Jacuzzi</li>
-                                    <li>₹5,000 per night</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>Presidential Suite</h6>
-                                <ul>
-                                    <li>2 King Beds + Living Area</li>
-                                    <li>Free Wi-Fi</li>
-                                    <li>Air Conditioning</li>
-                                    <li>Private Pool</li>
-                                    <li>₹8,000 per night</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Terms and Conditions Modal -->
-    <div class="modal fade" id="termsModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Terms and Conditions</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <h6>Booking Terms</h6>
-                    <ul>
-                        <li>Check-in time is 2:00 PM and check-out time is 11:00 AM</li>
-                        <li>Early check-in and late check-out are subject to availability</li>
-                        <li>Valid ID proof is required at the time of check-in</li>
-                        <li>Cancellation policy: 24 hours prior to check-in for full refund</li>
-                        <li>No refund for cancellations made less than 24 hours before check-in</li>
-                    </ul>
-
-                    <h6>Payment Terms</h6>
-                    <ul>
-                        <li>Full payment is required at the time of check-in</li>
-                        <li>We accept cash, credit/debit cards, and online payments</li>
-                        <li>Additional charges may apply for extra services</li>
-                        <li>All prices are inclusive of taxes</li>
-                    </ul>
-
-                    <h6>Hotel Policies</h6>
-                    <ul>
-                        <li>Smoking is strictly prohibited in the rooms</li>
-                        <li>Pets are not allowed</li>
-                        <li>Guests are responsible for any damage to hotel property</li>
-                        <li>The hotel is not responsible for lost or stolen items</li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -253,14 +155,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
     <script>
+        // Load reservations from localStorage
+        let reservations = JSON.parse(localStorage.getItem('hotelReservations')) || [];
+
         // Check if user is logged in
         const currentUser = sessionStorage.getItem('currentUser');
         const userRole = sessionStorage.getItem('userRole');
 
         if (!currentUser || userRole !== 'customer') {
-            // Redirect to login if not authenticated
             window.location.href = 'index.html';
-            return;
         }
 
         // Update welcome message
@@ -268,19 +171,304 @@
         if (welcomeUser) {
             welcomeUser.textContent = `Welcome ${currentUser}`;
         }
-        // Set minimum date to today
+
+        // Initialize form
         document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('reservationForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const inputs = form.querySelectorAll('input, select, textarea');
+
+            // Set minimum date to today and set default values
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('checkIn').setAttribute('min', today);
             document.getElementById('checkOut').setAttribute('min', today);
 
-            // Update check-out minimum date when check-in changes
+            // Set default dates to today and tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('checkIn').value = today;
+            document.getElementById('checkOut').value = tomorrow.toISOString().split('T')[0];
+
+            // Update check-out minimum when check-in changes
             document.getElementById('checkIn').addEventListener('change', function () {
                 const checkInDate = new Date(this.value);
                 checkInDate.setDate(checkInDate.getDate() + 1);
                 const minCheckOut = checkInDate.toISOString().split('T')[0];
                 document.getElementById('checkOut').setAttribute('min', minCheckOut);
+                validateForm();
             });
+
+            // Block previous dates in calendar
+            document.getElementById('checkIn').addEventListener('focus', function () {
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+
+                // Set min date to today (prevent past dates)
+                this.setAttribute('min', today.toISOString().split('T')[0]);
+
+                // Add event listener to prevent past date selection
+                this.addEventListener('input', function (e) {
+                    const selectedDate = new Date(e.target.value);
+                    if (selectedDate < yesterday) {
+                        e.preventDefault();
+                        e.target.value = '';
+                        alert('Cannot select past dates. Please select today or a future date.');
+                    }
+                });
+            });
+
+            document.getElementById('checkOut').addEventListener('focus', function () {
+                const checkInValue = document.getElementById('checkIn').value;
+                if (checkInValue) {
+                    const checkInDate = new Date(checkInValue);
+                    checkInDate.setDate(checkInDate.getDate() + 1);
+
+                    // Set min date to check-in + 1 day
+                    this.setAttribute('min', checkInDate.toISOString().split('T')[0]);
+
+                    // Add event listener to prevent invalid date selection
+                    this.addEventListener('input', function (e) {
+                        const selectedDate = new Date(e.target.value);
+                        const minDate = new Date(checkInValue);
+                        minDate.setDate(minDate.getDate() + 1);
+                        if (selectedDate < minDate) {
+                            e.preventDefault();
+                            e.target.value = '';
+                            alert('Check-out date must be after check-in date.');
+                        }
+                    });
+                }
+            });
+
+            // Real-time validation
+            inputs.forEach(input => {
+                input.addEventListener('input', validateForm);
+                input.addEventListener('blur', function () {
+                    validateField(this);
+                });
+            });
+
+            // Form submission
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Validate all required fields
+                let hasEmptyFields = false;
+                const requiredFields = ['checkIn', 'checkOut', 'roomType', 'name', 'contact'];
+
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (!field.value.trim()) {
+                        field.classList.add('is-invalid');
+                        hasEmptyFields = true;
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                // Check terms checkbox
+                const termsCheckbox = document.getElementById('terms');
+                if (!termsCheckbox.checked) {
+                    termsCheckbox.classList.add('is-invalid');
+                    hasEmptyFields = true;
+                } else {
+                    termsCheckbox.classList.remove('is-invalid');
+                }
+
+                // If there are empty fields, show error and stop
+                if (hasEmptyFields) {
+                    form.classList.add('was-validated');
+                    alert('Please fill in all required fields before submitting.');
+                    return;
+                }
+
+                // Validate specific field formats
+                const name = document.getElementById('name');
+                if (!/^[A-Za-z\s]+$/.test(name.value)) {
+                    name.classList.add('is-invalid');
+                    alert('Name should contain only alphabets');
+                    return;
+                }
+
+                const contact = document.getElementById('contact');
+                if (!/^[0-9]{10}$/.test(contact.value)) {
+                    contact.classList.add('is-invalid');
+                    alert('Please enter a valid 10-digit mobile number');
+                    return;
+                }
+
+                // Validate dates
+                const checkIn = new Date(document.getElementById('checkIn').value);
+                const checkOut = new Date(document.getElementById('checkOut').value);
+
+                if (checkOut <= checkIn) {
+                    document.getElementById('checkOut').classList.add('is-invalid');
+                    alert('Check-out date must be after check-in date');
+                    return;
+                }
+
+                // All validations passed
+                form.classList.remove('was-validated');
+
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+                // Create reservation
+                createReservation();
+            });
+
+            function createReservation() {
+                // Get form values
+                const checkIn = document.getElementById('checkIn').value;
+                const checkOut = document.getElementById('checkOut').value;
+                const roomType = document.getElementById('roomType').value;
+                const name = document.getElementById('name').value;
+                const contact = document.getElementById('contact').value;
+                const specialRequests = document.getElementById('specialRequests').value;
+
+                // Generate booking ID
+                const bookingId = 'BK' + Date.now();
+
+                // Calculate amount
+                const checkInDate = new Date(checkIn);
+                const checkOutDate = new Date(checkOut);
+                const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+
+                const roomRates = {
+                    'standard': 2000,
+                    'deluxe': 3000,
+                    'suite': 5000,
+                    'presidential': 8000
+                };
+
+                const roomRate = roomRates[roomType] || 2000;
+                const roomCharges = nights * roomRate;
+                const gst = Math.round(roomCharges * 0.18);
+                const totalAmount = roomCharges + gst;
+
+                // Allocate room number
+                function allocateRoomNumber(roomType) {
+                    const roomRanges = {
+                        'standard': { min: 101, max: 110 },
+                        'deluxe': { min: 201, max: 210 },
+                        'suite': { min: 301, max: 305 },
+                        'presidential': { min: 401, max: 402 }
+                    };
+
+                    const range = roomRanges[roomType] || roomRanges['standard'];
+                    const availableRooms = [];
+
+                    for (let i = range.min; i <= range.max; i++) {
+                        const isOccupied = reservations.some(r => r.roomNumber == i.toString() &&
+                            (r.status === 'approved' || r.status === 'pending'));
+                        if (!isOccupied) {
+                            availableRooms.push(i);
+                        }
+                    }
+
+                    return availableRooms.length > 0 ? availableRooms[0].toString() : range.min.toString();
+                }
+
+                // Create reservation object
+                const reservation = {
+                    bookingId: "B" + Math.floor(Math.random() * 100000),
+                    userId: sessionStorage.getItem("userId") || sessionStorage.getItem("loggedInUser"),
+                    name: name,
+                    roomType: roomType,
+                    checkIn: checkIn,
+                    checkOut: checkOut,
+                    nights: nights,
+                    amount: totalAmount,
+                    roomNumber: allocateRoomNumber(roomType),
+                    status: 'pending',
+                    roomRate: roomRate,
+                    specialRequests: specialRequests,
+                    createdAt: new Date().toISOString()
+                };
+
+                // Save to both formats for compatibility
+                reservations.push(reservation);
+                localStorage.setItem('hotelReservations', JSON.stringify(reservations));
+
+                // Also save as currentBooking for immediate billing access
+                localStorage.setItem("currentBooking", JSON.stringify(reservation));
+
+                // Show success message
+                alert(`Reservation Successful! Your Booking ID: ${reservation.bookingId}`);
+
+                // Reset form
+                form.reset();
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Make Reservation';
+
+                // Redirect to billing page
+                setTimeout(() => {
+                    window.location.href = 'billing.html';
+                }, 2000);
+            }
+
+            function validateForm() {
+                let isValid = true;
+
+                // Check all input fields
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isValid = false;
+                    }
+                });
+
+                // Check checkbox separately
+                const termsCheckbox = document.getElementById('terms');
+                if (!termsCheckbox.checked) {
+                    isValid = false;
+                }
+
+                // Additional validation for specific fields
+                const name = document.getElementById('name');
+                if (name.value && !/^[A-Za-z\s]+$/.test(name.value)) {
+                    isValid = false;
+                }
+
+                const contact = document.getElementById('contact');
+                if (contact.value && !/^[0-9]{10}$/.test(contact.value)) {
+                    isValid = false;
+                }
+
+                // Enable/disable submit button
+                submitBtn.disabled = !isValid;
+            }
+
+            function validateField(field) {
+                if (field.type === 'checkbox') {
+                    return;
+                }
+
+                field.classList.remove('is-invalid', 'is-valid');
+
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    return;
+                }
+
+                // Specific field validations
+                if (field.id === 'name') {
+                    if (!/^[A-Za-z\s]+$/.test(field.value)) {
+                        field.classList.add('is-invalid');
+                        return;
+                    }
+                }
+
+                if (field.id === 'contact') {
+                    if (!/^[0-9]{10}$/.test(field.value)) {
+                        field.classList.add('is-invalid');
+                        return;
+                    }
+                }
+
+                field.classList.add('is-valid');
+            }
         });
     </script>
 </body>

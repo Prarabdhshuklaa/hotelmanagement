@@ -90,28 +90,12 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="roomNumber" class="form-label">Room Number</label>
-                                <input type="text" class="form-control" id="roomNumber"
-                                    placeholder="Enter your room number" pattern="[0-9]{3}">
-                                <div class="invalid-feedback"></div>
-                                <small class="text-muted">3-digit room number (optional)</small>
-                            </div>
-
-                            <div class="mb-3">
                                 <label for="contact" class="form-label">Contact Number</label>
                                 <input type="text" class="form-control" id="contact"
                                     placeholder="Enter 10-digit mobile number" maxlength="10" pattern="[0-9]{10}"
                                     required>
                                 <div class="invalid-feedback"></div>
                                 <small class="text-muted">10-digit mobile number</small>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="customerId" class="form-label">Customer ID</label>
-                                <input type="text" class="form-control" id="customerId"
-                                    placeholder="Enter your customer ID" required>
-                                <div class="invalid-feedback"></div>
-                                <small class="text-muted">Your customer ID</small>
                             </div>
 
                             <div class="mb-3">
@@ -129,18 +113,6 @@
                                     maxlength="500" required></textarea>
                                 <div class="invalid-feedback"></div>
                                 <small class="text-muted">Maximum 500 characters</small>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="priority" class="form-label">Priority Level</label>
-                                <select class="form-select" id="priority" required>
-                                    <option value="">Select Priority</option>
-                                    <option value="low">Low</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="high">High</option>
-                                    <option value="urgent">Urgent</option>
-                                </select>
-                                <div class="invalid-feedback"></div>
                             </div>
 
                             <div class="d-grid">
@@ -191,9 +163,44 @@
         </div>
     </footer>
 
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="successModalLabel">
+                        <i class="fas fa-check-circle"></i> Feedback Submitted Successfully!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <i class="fas fa-check-circle text-success fa-4x mb-3"></i>
+                        <h4 class="text-success mb-3">Thank You!</h4>
+                        <p id="successMessage" class="mb-0">Your feedback has been submitted successfully.</p>
+                        <div class="mt-3 p-3 bg-light rounded">
+                            <strong><i class="fas fa-ticket-alt"></i> Complaint ID:</strong>
+                            <span id="complaintIdDisplay" class="text-primary fw-bold"></span>
+                        </div>
+                        <p class="text-muted mt-3 mb-0">We will contact you within 24 hours regarding your feedback.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="location.reload()">
+                        <i class="fas fa-plus"></i> Submit Another Feedback
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
     <script>
+        // Load users from localStorage
+        const users = JSON.parse(localStorage.getItem('hotelUsers')) || [];
         // Check if user is logged in
         const currentUser = sessionStorage.getItem('currentUser');
         const userRole = sessionStorage.getItem('userRole');
@@ -209,127 +216,115 @@
         if (welcomeUser) {
             welcomeUser.textContent = `Welcome ${currentUser}`;
         }
-        // Handle support form submission
-        document.getElementById('supportForm').addEventListener('submit', function (e) {
-            e.preventDefault();
 
-            // Clear previous errors
-            clearAllErrors();
+        // Wait for DOM to be ready before adding event listeners
+        document.addEventListener('DOMContentLoaded', function () {
+            // Handle support form submission
+            document.getElementById('supportForm').addEventListener('submit', function (e) {
+                e.preventDefault();
 
-            // Get form values
-            const complaintType = document.getElementById('complaintType').value;
-            const roomNumber = document.getElementById('roomNumber').value;
-            const contact = document.getElementById('contact').value;
-            const customerId = document.getElementById('customerId').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-            const priority = document.getElementById('priority').value;
+                // Clear previous errors
+                clearAllErrors();
 
-            let isValid = true;
+                // Get form values
+                const complaintType = document.getElementById('complaintType').value;
+                const contact = document.getElementById('contact').value;
+                const subject = document.getElementById('subject').value;
+                const message = document.getElementById('message').value;
 
-            // Validate complaint type
-            if (!complaintType) {
-                showError('complaintType', 'Please select a complaint type');
-                isValid = false;
-            }
+                let isValid = true;
 
-            // Validate room number if provided
-            if (roomNumber && !/^\d{3}$/.test(roomNumber)) {
-                showError('roomNumber', 'Room number must be 3 digits');
-                isValid = false;
-            }
+                // Validate complaint type
+                if (!complaintType) {
+                    showError('complaintType', 'Please select a complaint type');
+                    isValid = false;
+                }
 
-            // Validate contact
-            if (!validateMobile(contact)) {
-                showError('contact', 'Contact number must be 10 digits');
-                isValid = false;
-            }
+                // Validate contact
+                if (!validateMobile(contact)) {
+                    showError('contact', 'Contact number must be 10 digits');
+                    isValid = false;
+                }
 
-            // Validate customer ID
-            if (!customerId.trim()) {
-                showError('customerId', 'Customer ID is required');
-                isValid = false;
-            }
+                // Validate subject
+                if (!subject.trim()) {
+                    showError('subject', 'Subject is required');
+                    isValid = false;
+                }
 
-            // Validate subject
-            if (!subject.trim()) {
-                showError('subject', 'Subject is required');
-                isValid = false;
-            }
+                // Validate message
+                if (!message.trim()) {
+                    showError('message', 'Detailed message is required');
+                    isValid = false;
+                }
 
-            // Validate message
-            if (!message.trim()) {
-                showError('message', 'Detailed message is required');
-                isValid = false;
-            }
+                if (!isValid) {
+                    return;
+                }
 
-            // Validate priority
-            if (!priority) {
-                showError('priority', 'Please select a priority level');
-                isValid = false;
-            }
+                // Generate complaint ID
+                const complaintId = 'COMP' + Date.now();
 
-            if (!isValid) {
-                return;
-            }
+                // Save feedback to storage
+                const feedback = {
+                    complaintId,
+                    complaintType,
+                    contact,
+                    subject,
+                    message,
+                    status: 'pending',
+                    createdAt: new Date().toISOString()
+                };
 
-            // Generate complaint ID
-            const complaintId = 'COMP' + Date.now();
+                // Initialize feedbacks array if not exists
+                if (!localStorage.getItem('feedbacks')) {
+                    localStorage.setItem('feedbacks', JSON.stringify([]));
+                }
 
-            // Show success message
-            showSuccess(`Your ${complaintType} has been submitted successfully. Your complaint ID is: ${complaintId}. We will contact you within 24 hours.`);
+                // Get existing feedbacks and add new one
+                const feedbacks = JSON.parse(localStorage.getItem('feedbacks'));
+                feedbacks.push(feedback);
+                localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
 
-            // Reset form
-            this.reset();
+                // Show success modal
+                showFeedbackSuccessModal(complaintId, complaintType);
 
-            // Log complaint (in real application, this would be saved to database)
-            console.log('Complaint submitted:', {
-                complaintId,
-                complaintType,
-                roomNumber,
-                contact,
-                customerId,
-                subject,
-                message,
-                priority
+                // Reset form
+                this.reset();
+
+                // Auto-fill user info after reset
+                const userIdValue = sessionStorage.getItem('userId');
+                if (users && userIdValue) {
+                    const user = users.find(u => u.userId === userIdValue);
+                    if (user) {
+                        // Auto-fill contact only
+                        document.getElementById('contact').value = user.mobile.replace('+91-', '');
+                    }
+                }
             });
-
-            // Save feedback to storage
-            const feedback = {
-                complaintId,
-                complaintType,
-                roomNumber,
-                contact,
-                customerId,
-                subject,
-                message,
-                priority,
-                status: 'pending',
-                createdAt: new Date().toISOString()
-            };
-
-            // Initialize feedbacks array if not exists
-            if (!localStorage.getItem('feedbacks')) {
-                localStorage.setItem('feedbacks', JSON.stringify([]));
-            }
-
-            // Get existing feedbacks and add new one
-            const feedbacks = JSON.parse(localStorage.getItem('feedbacks'));
-            feedbacks.push(feedback);
-            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
         });
+
+        // Function to show feedback success modal
+        function showFeedbackSuccessModal(complaintId, complaintType) {
+            // Update modal content
+            document.getElementById('complaintIdDisplay').textContent = complaintId;
+            document.getElementById('successMessage').textContent =
+                `Your ${complaintType} has been submitted successfully. We will review it and contact you within 24 hours.`;
+
+            // Show the modal
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        }
 
         // Auto-fill user information if logged in
         document.addEventListener('DOMContentLoaded', function () {
             const userId = sessionStorage.getItem('userId');
-            const customerId = sessionStorage.getItem('customerId');
 
             if (users && userId) {
                 const user = users.find(u => u.userId === userId);
                 if (user) {
-                    // Auto-fill contact and customer ID
+                    // Auto-fill contact only
                     document.getElementById('contact').value = user.mobile.replace('+91-', '');
-                    document.getElementById('customerId').value = user.customerId;
                 }
             }
         });

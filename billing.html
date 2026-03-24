@@ -75,16 +75,16 @@
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <h6>Guest Information</h6>
-                                    <p><strong>Name:</strong> <span id="guestName">John Doe</span></p>
-                                    <p><strong>Room:</strong> <span id="roomNumber">101</span></p>
-                                    <p><strong>Check-in:</strong> <span id="checkInDate">2024-03-20</span></p>
-                                    <p><strong>Check-out:</strong> <span id="checkOutDate">2024-03-22</span></p>
+                                    <p><strong>Name:</strong> <span id="guestName">-</span></p>
+                                    <p><strong>Room:</strong> <span id="roomNumber">-</span></p>
+                                    <p><strong>Check-in:</strong> <span id="checkInDate">-</span></p>
+                                    <p><strong>Check-out:</strong> <span id="checkOutDate">-</span></p>
                                 </div>
                                 <div class="col-md-6">
                                     <h6>Booking Details</h6>
-                                    <p><strong>Booking ID:</strong> <span id="bookingId">BK20240320001</span></p>
-                                    <p><strong>Room Type:</strong> <span id="roomType">Deluxe Room</span></p>
-                                    <p><strong>Nights:</strong> <span id="numberOfNights">2</span></p>
+                                    <p><strong>Booking ID:</strong> <span id="bookingId">-</span></p>
+                                    <p><strong>Room Type:</strong> <span id="roomType">-</span></p>
+                                    <p><strong>Nights:</strong> <span id="numberOfNights">-</span></p>
                                 </div>
                             </div>
                         </div>
@@ -100,43 +100,8 @@
                                     <th class="text-end">Amount (₹)</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Room Charges (Deluxe Room)</td>
-                                    <td class="text-end">2</td>
-                                    <td class="text-end">3,000</td>
-                                    <td class="text-end">6,000</td>
-                                </tr>
-                                <tr>
-                                    <td>Room Service</td>
-                                    <td class="text-end">3</td>
-                                    <td class="text-end">500</td>
-                                    <td class="text-end">1,500</td>
-                                </tr>
-                                <tr>
-                                    <td>Laundry Service</td>
-                                    <td class="text-end">1</td>
-                                    <td class="text-end">300</td>
-                                    <td class="text-end">300</td>
-                                </tr>
-                                <tr>
-                                    <td>Mini Bar</td>
-                                    <td class="text-end">-</td>
-                                    <td class="text-end">-</td>
-                                    <td class="text-end">800</td>
-                                </tr>
-                                <tr class="table-active">
-                                    <td colspan="3"><strong>Subtotal</strong></td>
-                                    <td class="text-end"><strong>8,600</strong></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3">GST (18%)</td>
-                                    <td class="text-end">1,548</td>
-                                </tr>
-                                <tr class="table-success">
-                                    <td colspan="3"><strong>Total Amount</strong></td>
-                                    <td class="text-end bill-amount">10,148</td>
-                                </tr>
+                            <tbody id="billingTableBody">
+                                <!-- Billing items will be loaded here -->
                             </tbody>
                         </table>
 
@@ -185,52 +150,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Additional Services -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h5><i class="fas fa-concierge-bell"></i> Additional Services</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Available Services</h6>
-                                <ul class="list-unstyled">
-                                    <li><i class="fas fa-utensils text-primary"></i> Room Service - ₹500 per order</li>
-                                    <li><i class="fas fa-tshirt text-info"></i> Laundry Service - ₹300 per load</li>
-                                    <li><i class="fas fa-glass-martini text-warning"></i> Mini Bar - Variable charges
-                                    </li>
-                                    <li><i class="fas fa-wifi text-success"></i> High-Speed Wi-Fi - Free</li>
-                                    <li><i class="fas fa-dumbbell text-danger"></i> Gym Access - Free</li>
-                                    <li><i class="fas fa-swimming-pool text-primary"></i> Pool Access - Free</li>
-                                </ul>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>Request Additional Service</h6>
-                                <form id="serviceRequestForm">
-                                    <div class="mb-3">
-                                        <label for="serviceType" class="form-label">Service Type</label>
-                                        <select class="form-select" id="serviceType" required>
-                                            <option value="">Select Service</option>
-                                            <option value="room-service">Room Service</option>
-                                            <option value="laundry">Laundry Service</option>
-                                            <option value="spa">Spa Treatment</option>
-                                            <option value="transport">Airport Transfer</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="serviceNotes" class="form-label">Special Instructions</label>
-                                        <textarea class="form-control" id="serviceNotes" rows="2"
-                                            placeholder="Any special requirements..."></textarea>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-plus"></i> Request Service
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -272,9 +191,9 @@
             const userId = sessionStorage.getItem('userId');
             const customerId = sessionStorage.getItem('customerId');
 
-            // Get user's active reservation
+            // Get user's active reservation (pending or approved)
             const activeReservation = reservations.find(r =>
-                r.userId === userId && r.status === 'approved'
+                r.userId === userId && (r.status === 'approved' || r.status === 'pending')
             );
 
             if (activeReservation) {
@@ -290,8 +209,11 @@
                 const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
                 document.getElementById('numberOfNights').textContent = nights;
 
-                // Assign room number (mock)
-                document.getElementById('roomNumber').textContent = Math.floor(Math.random() * 300) + 100;
+                // Use actual assigned room number from reservation
+                document.getElementById('roomNumber').textContent = activeReservation.roomNumber || 'N/A';
+
+                // Load billing table with real data
+                loadBillingTable(activeReservation, nights);
             } else {
                 // Show no active reservation message
                 document.querySelector('.card-body').innerHTML = `
@@ -303,6 +225,48 @@
                     </div>
                 `;
             }
+        }
+
+        // Load billing table with real reservation data
+        function loadBillingTable(reservation, nights) {
+            const tableBody = document.getElementById('billingTableBody');
+
+            // Use stored amount from reservation
+            const roomRate = reservation.roomRate || 2000;
+            const roomCharges = (reservation.amount || 0) - Math.round((reservation.amount || 0) * 0.18 / 1.18);
+            const subtotal = roomCharges;
+            const gst = Math.round(subtotal * 0.18);
+            const total = reservation.amount || 0;
+
+            let html = '';
+
+            // Room charges
+            html += `
+                <tr>
+                    <td>Room Charges (${getRoomTypeDisplay(reservation.roomType)})</td>
+                    <td class="text-end">${nights}</td>
+                    <td class="text-end">${roomRate.toLocaleString('en-IN')}</td>
+                    <td class="text-end">${roomCharges.toLocaleString('en-IN')}</td>
+                </tr>
+            `;
+
+            // Add tax
+            html += `
+                <tr class="table-active">
+                    <td colspan="3"><strong>Subtotal</strong></td>
+                    <td class="text-end"><strong>${subtotal.toLocaleString('en-IN')}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="3">GST (18%)</td>
+                    <td class="text-end">${gst.toLocaleString('en-IN')}</td>
+                </tr>
+                <tr class="table-success">
+                    <td colspan="3"><strong>Total Amount</strong></td>
+                    <td class="text-end bill-amount">${total.toLocaleString('en-IN')}</td>
+                </tr>
+            `;
+
+            tableBody.innerHTML = html;
         }
 
         // Load payment history
